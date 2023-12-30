@@ -1,0 +1,20 @@
+_cortex_shell_integration() {
+  if [[ -n "${BUFFER}" ]]; then
+    local _cortex_shell_prev_cmd=$BUFFER
+    BUFFER+="⌛"
+    zle -I && zle redisplay
+
+    local output=$(cortex-shell --shell <<< "${_cortex_shell_prev_cmd}")
+
+    output="${output#"${output%%[![:space:]]*}"}" # remove leading whitespace characters
+    output="${output%"${output##*[![:space:]]}"}" # remove trailing whitespace characters
+
+    BUFFER=${output}
+    zle end-of-line
+  fi
+}
+
+if [[ -o interactive ]]; then
+    zle -N _cortex_shell_integration
+    bindkey ^l _cortex_shell_integration
+fi

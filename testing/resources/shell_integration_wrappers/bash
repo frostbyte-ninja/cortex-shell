@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+source "${HOME}/.bashrc"
+
+READLINE_LINE="x"
+READLINE_POINT=${#READLINE_LINE}
+
+_cortex_shell_integration
+
+echo -n "$READLINE_LINE"
