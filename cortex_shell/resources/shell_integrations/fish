@@ -1,0 +1,10 @@
+function _cortex_shell_integration
+    set current_commandline (commandline)
+    if test -n $current_commandline
+        commandline -r (echo $current_commandline | cortex-shell --shell | string trim)
+    end
+end
+
+if status is-interactive
+    bind \cl _cortex_shell_integration
+end

@@ -1,0 +1,15 @@
+_cortex_shell_integration() {
+    if [[ -n "${READLINE_LINE}" ]]; then
+        local output=$(cortex-shell --shell <<< "$READLINE_LINE")
+
+        output="${output#"${output%%[![:space:]]*}"}" # remove leading whitespace characters
+        output="${output%"${output##*[![:space:]]}"}" # remove trailing whitespace characters
+
+        READLINE_LINE=${output}
+        READLINE_POINT=${#READLINE_LINE}
+    fi
+}
+
+if [[ $- == *i* ]]; then
+    bind -x '"\C-l": _cortex_shell_integration'
+fi

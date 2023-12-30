@@ -1,0 +1,10 @@
+[general]
+ignore=title-min-length,body-min-length,body-is-missing
+ignore-stdin=true
+contrib=contrib-title-conventional-commits
+
+[title-max-length]
+line-length=120
+
+[body-max-line-length]
+line-length=120
