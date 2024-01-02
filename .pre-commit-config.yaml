@@ -32,7 +32,7 @@ repos:
     rev: v3.15.0
     hooks:
       - id: pyupgrade
-        args: [--py38-plus]
+        args: [--py39-plus]
   - repo: https://github.com/hadialqattan/pycln
     rev: v2.4.0
     hooks:
@@ -54,4 +54,4 @@ repos:
       - id: ruff
         alias: ruff-lint
         name: ruff-lint
-        args: [--preview, --fix, --unsafe-fixes]
+        args: [--preview, --fix, --unsafe-fixes, --exit-non-zero-on-fix]
