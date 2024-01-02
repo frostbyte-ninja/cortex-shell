@@ -14,7 +14,7 @@ pip install cortex-shell
 
 You will need an OpenAI API key, which you can generate [here](https://platform.openai.com/account/api-keys).
 
-Upon the first run, a default config file will be created. You need to fill in your credentials in the `~/.config/cortex_shell/config.yaml` file.
+Upon the first run, a default config file will be created. You need to fill in your credentials in the `~/.config/cortex-shell/config.yaml` file.
 
 ## Usage
 
@@ -376,8 +376,8 @@ To list all the sessions from either conversational mode, use the `--list-chats`
 
 ```shell
 cortex-shell --list-chats
-# /tmp/cortex_shell/history/number.yaml
-# /tmp/cortex_shell/history/python_request.yaml
+# /tmp/cortex-shell/history/number.yaml
+# /tmp/cortex-shell/history/python_request.yaml
 ```
 
 To show all the messages related to a specific conversation, use the `--show-chat` option followed by the session name:
@@ -424,7 +424,7 @@ cortex-shell --role pirate hi
 
 ## Runtime Configuration File
 
-You can set up some parameters in the runtime configuration file `~/.config/cortex_shell/config.yaml`:
+You can set up some parameters in the runtime configuration file `~/.config/cortex-shell/config.yaml`:
 
 ```yaml
 apis:
@@ -436,9 +436,9 @@ apis:
 misc:
   request_timeout: 10
   session:
-    chat_history_path: /tmp/cortex_shell/history
+    chat_history_path: /tmp/cortex-shell/history
     chat_history_size: 100
-    chat_cache_path: /tmp/cortex_shell/cache
+    chat_cache_path: /tmp/cortex-shell/cache
     chat_cache_size: 100
     cache: true
 default:
@@ -468,7 +468,7 @@ roles:
 
 ## Overriding Config File Parameters with Command-Line Options
 
-CortexShell allows you to override most parameters specified in the configuration file (`~/.config/cortex_shell/config.yaml`) using command-line options. This flexibility enables you to customize CortexShell's behavior for specific tasks without permanently modifying the configuration file.
+CortexShell allows you to override most parameters specified in the configuration file (`~/.config/cortex-shell/config.yaml`) using command-line options. This flexibility enables you to customize CortexShell's behavior for specific tasks without permanently modifying the configuration file.
 
 For example, if you have set a default temperature value in the configuration file, you can override it for a single CortexShell invocation using the `--temperature` option:
 

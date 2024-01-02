@@ -46,10 +46,10 @@ class TestConfig:
         monkeypatch.delenv("CORTEX_SHELL_CONFIG_PATH")
 
         monkeypatch.setenv("XDG_CACHE_HOME", "/test/xdg")
-        assert _get_default_directory() == Path("/test/xdg/cortex_shell").resolve()
+        assert _get_default_directory() == Path("/test/xdg/cortex-shell").resolve()
         monkeypatch.delenv("XDG_CACHE_HOME")
 
-        assert _get_default_directory() == Path.home() / ".config" / "cortex_shell"
+        assert _get_default_directory() == Path.home() / ".config" / "cortex-shell"
 
     def test_config_file(self):
         assert Config().config_file() == _get_default_directory() / C.CONFIG_FILE
@@ -69,13 +69,13 @@ class TestDefaultConfig:
         assert mock_default_config.request_timeout() == 10
 
     def test_chat_history_path(self, mock_default_config):
-        assert mock_default_config.chat_history_path() == get_temp_dir() / C.PROJECT_MODULE / "history"
+        assert mock_default_config.chat_history_path() == get_temp_dir() / C.PROJECT_NAME / "history"
 
     def test_chat_history_size(self, mock_default_config):
         assert mock_default_config.chat_history_size() == 100
 
     def test_chat_cache_path(self, mock_default_config):
-        assert mock_default_config.chat_cache_path() == get_temp_dir() / C.PROJECT_MODULE / "cache"
+        assert mock_default_config.chat_cache_path() == get_temp_dir() / C.PROJECT_NAME / "cache"
 
     def test_chat_cache_size(self, mock_default_config):
         assert mock_default_config.chat_cache_size() == 100

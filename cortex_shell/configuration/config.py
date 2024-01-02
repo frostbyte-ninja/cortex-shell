@@ -23,7 +23,7 @@ def _get_default_directory() -> Path:
     if path_str := os.environ.get("CORTEX_SHELL_CONFIG_PATH"):
         path = Path(path_str)
     else:
-        path = Path(os.environ.get("XDG_CACHE_HOME") or (Path.home() / ".config").resolve()) / C.PROJECT_MODULE
+        path = Path(os.environ.get("XDG_CACHE_HOME") or (Path.home() / ".config").resolve()) / C.PROJECT_NAME
     return path.resolve()
 
 
