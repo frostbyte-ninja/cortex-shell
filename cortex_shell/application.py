@@ -232,7 +232,7 @@ class Application:
             bool,
             typer.Option(
                 "--install-integration",
-                help="Install shell integration (Fish, Bash and ZSH supported)",
+                help="Install shell integration (Fish, Bash and ZSH supported).",
                 callback=install_shell_integration,
                 rich_help_panel="Other Options",
             ),
