@@ -6,6 +6,7 @@ keywords = ["shell", "gpt", "openai", "cli", "productivity"]
 authors = ["frostbyte-ninja"]
 readme = "README.md"
 license = "MIT"
+repository = "https://github.com/frostbyte-ninja/cortex-shell"
 classifiers = [
     "Operating System :: OS Independent",
     "Topic :: Software Development",
@@ -20,10 +21,6 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
 ]
-
-[project.urls]
-homepage = "https://github.com/frostbyte-ninja/cortex-shell"
-repository = "https://github.com/frostbyte-ninja/cortex-shell"
 
 [tool.poetry-dynamic-versioning]
 enable = true
