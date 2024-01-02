@@ -491,52 +491,56 @@ By using command-line options, you can easily customize CortexShell's behavior o
 ## Full list of arguments
 
 ```text
-
  Usage: cortex-shell [OPTIONS] [PROMPT]
 
-╭─ Arguments ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│   prompt      [PROMPT]  The prompt to generate completions for.                                                                                              │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-╭─ Options ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ --help          Show this message and exit.                                                                                                                  │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-╭─ Input Options ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ --editor  -e            Open $EDITOR to provide a prompt.                                                                                                    │
-│ --repl    -r            Start a REPL (Read-eval-print loop) session.                                                                                         │
-│ --file    -f      FILE  Use one or multiple files as additional input.                                                                                       │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-╭─ Model Options ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ --api                    TEXT                       API to use.                                                                                              │
-│ --model                  TEXT                       Large language model to use.                                                                             │
-│ --temperature            FLOAT RANGE [0.0<=x<=2.0]  Randomness of generated output.                                                                          │
-│ --top-probability        FLOAT RANGE [0.0<=x<=1.0]  Limits highest probable tokens (words).                                                                  │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-╭─ Output Options ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ --stream         --no-stream             Enable stream output.                                                                                               │
-│ --formatted      --no-formatted          Enable formatted output.                                                                                            │
-│ --color                            TEXT  Output color.                                                                                                       │
-│ --theme                            TEXT  Output theme.                                                                                                       │
-│ --output     -o                    PATH  A file where the last message from the assistant will be stored.                                                    │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-╭─ Cache Options ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ --cache          --no-cache      Cache completion results.                                                                                                   │
-│ --clear-cache                    Clear cache.                                                                                                                │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-╭─ Chat Options ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ --id           -i      TEXT  Follow conversation with an id.                                                                                                 │
-│ --show-chat            TEXT  Show all messages from a provided chat id.                                                                                      │
-│ --delete-chat          TEXT  Delete a single chat with id.                                                                                                   │
-│ --list-chats                 List all existing chat ids.                                                                                                     │
-│ --clear-chats                Clear all chats.                                                                                                                │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-╭─ Role Options ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ --code            -c            Generate only code.                                                                                                          │
-│ --describe-shell  -d            Describe a shell command.                                                                                                    │
-│ --shell           -s            Generate and execute shell commands.                                                                                         │
-│ --role                    TEXT  System role for GPT model.                                                                                                   │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
-╭─ Other Options ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ --install-integration          Install shell integration (Fish, Bash and ZSH supported)                                                                      │
-│ --version                      Show version.                                                                                                                 │
-╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Arguments ──────────────────────────────────────────────────────────────────╮
+│   prompt      [PROMPT]  The prompt to generate completions for.              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭─ Options ────────────────────────────────────────────────────────────────────╮
+│ --help          Show this message and exit.                                  │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭─ Input Options ──────────────────────────────────────────────────────────────╮
+│ --editor  -e            Open $EDITOR to provide a prompt.                    │
+│ --repl    -r            Start a REPL (Read-eval-print loop) session.         │
+│ --file    -f      FILE  Use one or multiple files as additional input.       │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭─ Model Options ──────────────────────────────────────────────────────────────╮
+│ --api                    TEXT                      API to use.               │
+│ --model                  TEXT                      Large language model to   │
+│                                                    use.                      │
+│ --temperature            FLOAT RANGE               Randomness of generated   │
+│                          [0.0<=x<=2.0]             output.                   │
+│ --top-probability        FLOAT RANGE               Limits highest probable   │
+│                          [0.0<=x<=1.0]             tokens (words).           │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭─ Output Options ─────────────────────────────────────────────────────────────╮
+│ --stream         --no-stream             Enable stream output.               │
+│ --formatted      --no-formatted          Enable formatted output.            │
+│ --color                            TEXT  Output color.                       │
+│ --theme                            TEXT  Output theme.                       │
+│ --output     -o                    PATH  A file where the last message from  │
+│                                          the assistant will be stored.       │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭─ Cache Options ──────────────────────────────────────────────────────────────╮
+│ --cache          --no-cache      Cache completion results.                   │
+│ --clear-cache                    Clear cache.                                │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭─ Chat Options ───────────────────────────────────────────────────────────────╮
+│ --id           -i      TEXT  Follow conversation with an id.                 │
+│ --show-chat            TEXT  Show all messages from a provided chat id.      │
+│ --delete-chat          TEXT  Delete a single chat with id.                   │
+│ --list-chats                 List all existing chat ids.                     │
+│ --clear-chats                Clear all chats.                                │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭─ Role Options ───────────────────────────────────────────────────────────────╮
+│ --code            -c            Generate only code.                          │
+│ --describe-shell  -d            Describe a shell command.                    │
+│ --shell           -s            Generate and execute shell commands.         │
+│ --role                    TEXT  System role for GPT model.                   │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭─ Other Options ──────────────────────────────────────────────────────────────╮
+│ --install-integration          Install shell integration (Fish, Bash and ZSH │
+│                                supported)                                    │
+│ --version                      Show version.                                 │
+╰──────────────────────────────────────────────────────────────────────────────╯
 ```
