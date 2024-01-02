@@ -4,13 +4,13 @@
   "schedule": ["every weekend"],
   "packageRules": [
     {
-      "groupName": "all GitHub Actions updates",
+      "groupName": "all GitHub Actions",
       "groupSlug": "github-actions",
       "matchManagers": ["github-actions"],
       "matchUpdateTypes": ["major", "minor", "patch"]
     },
     {
-      "groupName": "all non-major Pre-Commit Hooks",
+      "groupName": "all non-major pre-commit hooks",
       "groupSlug": "pre-commit",
       "matchManagers": ["pre-commit"],
       "matchUpdateTypes": ["minor", "patch"]
