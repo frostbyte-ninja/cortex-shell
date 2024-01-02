@@ -1,0 +1,28 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", "group:all"],
+  "schedule": ["every weekend"],
+  "packageRules": [
+    {
+      "groupName": "all GitHub Actions updates",
+      "groupSlug": "github-actions",
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["major", "minor", "patch"]
+    },
+    {
+      "groupName": "all non-major Pre-Commit Hooks",
+      "groupSlug": "pre-commit",
+      "matchManagers": ["pre-commit"],
+      "matchUpdateTypes": ["minor", "patch"]
+    },
+    {
+      "groupName": "all non-major Python dependencies",
+      "groupSlug": "python",
+      "matchManagers": ["pip_requirements", "pipenv", "poetry"],
+      "matchUpdateTypes": ["minor", "patch"]
+    }
+  ],
+  "pre-commit": {
+    "enabled": true
+  }
+}
