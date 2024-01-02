@@ -22,8 +22,8 @@ classifiers = [
 ]
 
 [project.urls]
-homepage = "https://github.com/frostbyte-ninja/cortex_shell"
-repository = "https://github.com/frostbyte-ninja/cortex_shell"
+homepage = "https://github.com/frostbyte-ninja/cortex-shell"
+repository = "https://github.com/frostbyte-ninja/cortex-shell"
 
 [tool.poetry-dynamic-versioning]
 enable = true

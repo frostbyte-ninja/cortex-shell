@@ -36,9 +36,9 @@ APIS_DICT = cfgv.Map(
 SESSION_DICT = cfgv.Map(
     None,
     None,
-    cfgv.Optional("chat_history_path", check_path, get_temp_dir() / C.PROJECT_MODULE / "history"),
+    cfgv.Optional("chat_history_path", check_path, get_temp_dir() / C.PROJECT_NAME / "history"),
     cfgv.Optional("chat_history_size", cfgv.check_int, 100),
-    cfgv.Optional("chat_cache_path", check_path, get_temp_dir() / C.PROJECT_MODULE / "cache"),
+    cfgv.Optional("chat_cache_path", check_path, get_temp_dir() / C.PROJECT_NAME / "cache"),
     cfgv.Optional("chat_cache_size", cfgv.check_int, 100),
     cfgv.Optional("cache", cfgv.check_bool, True),
     cfgv.NoAdditionalKeys(("chat_history_path", "chat_history_size", "chat_cache_path", "chat_cache_size", "cache")),
