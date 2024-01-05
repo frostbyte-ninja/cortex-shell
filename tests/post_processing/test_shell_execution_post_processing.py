@@ -1,8 +1,10 @@
 import pytest
 
 from cortex_shell import constants as C  # noqa: N812
+from cortex_shell.handlers.default_handler import DefaultHandler
 from cortex_shell.post_processing.shell_execution_post_processing import Option, ShellExecutionPostProcessing
 from cortex_shell.types import Message
+from testing.util import ignore_if_windows
 
 
 @pytest.fixture()
@@ -83,3 +85,41 @@ class TestShellExecutionPostProcessing:
             stream=mock_role.output.stream,
             caching=False,
         )
+
+    @ignore_if_windows
+    @pytest.mark.parametrize(
+        ("selected_option", "expected_result"),
+        [
+            (Option.EXECUTE, Option.EXECUTE),
+            (Option.DESCRIBE, Option.DESCRIBE),
+            (Option.ABORT, Option.ABORT),
+        ],
+    )
+    def test_prompt_options(self, selected_option, expected_result, mocker):
+        mock = mocker.patch("prompt_toolkit.Application.run")
+        mock.return_value = selected_option
+
+        shell_execution_post_processing = ShellExecutionPostProcessing(
+            shell_role=mocker.Mock(),
+            describe_shell_role=mocker.Mock(),
+            client=mocker.Mock(),
+        )
+        result = shell_execution_post_processing._prompt()
+
+        assert result == expected_result
+
+    def test_get_shell_describe_handler(self, mocker):
+        mock_shell_role = mocker.Mock()
+        mock_describe_shell_role = mocker.Mock()
+        mock_client = mocker.Mock()
+
+        shell_execution_post_processing = ShellExecutionPostProcessing(
+            shell_role=mock_shell_role,
+            describe_shell_role=mock_describe_shell_role,
+            client=mock_client,
+        )
+
+        handler = shell_execution_post_processing._get_shell_describe_handler(mock_client)
+
+        assert isinstance(handler, DefaultHandler)
+        assert handler._processing._role == mock_describe_shell_role
