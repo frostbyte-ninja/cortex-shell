@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 import contextlib
+import errno
 import os
 import platform
 import re
+import shutil
+import stat
 import subprocess
 import sys
 from importlib import resources
@@ -152,3 +155,29 @@ def is_tty() -> bool:
 
 def get_temp_dir() -> Path:
     return Path(gettempdir())
+
+
+def rmtree(path: Path) -> None:
+    def handle_remove_readonly(
+        func: Callable[..., Any],
+        path_str: str,
+        exc: Exception,
+    ) -> None:
+        if (
+            func in {os.rmdir, os.remove, os.unlink}
+            and isinstance(exc, OSError)
+            and exc.errno in {errno.EACCES, errno.EPERM}
+        ):
+            path_ = Path(path_str)
+            for p in (path_, path_.parent):
+                p.chmod(p.stat().st_mode | stat.S_IWUSR)
+            func(path_)
+        else:
+            raise exc
+
+    if path.exists():
+        if sys.version_info >= (3, 12):
+            shutil.rmtree(path, ignore_errors=False, onexc=handle_remove_readonly)
+        else:
+            # remove this when Python 3.12 becomes the oldest supported release
+            shutil.rmtree(path, onerror=lambda func, path_str, exc: handle_remove_readonly(func, path_str, exc[1]))

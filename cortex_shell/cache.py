@@ -1,11 +1,10 @@
-import shutil
 from collections.abc import Generator
 from hashlib import md5
 from pathlib import Path
 from typing import Any, Callable
 
 from .configuration import cfg
-from .util import option_callback
+from .util import option_callback, rmtree
 from .yaml import yaml_dump
 
 
@@ -72,4 +71,4 @@ class Cache:
     @classmethod
     @option_callback
     def clear_cache_callback(cls, *_args: Any) -> None:
-        shutil.rmtree(cfg().chat_cache_path())
+        rmtree(cfg().chat_cache_path())

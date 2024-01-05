@@ -1,9 +1,10 @@
+import stat
 import subprocess
 
 import pytest
 
 from cortex_shell import constants as C  # noqa: N812
-from cortex_shell.util import get_colored_text, os_name, run_command, shell_name
+from cortex_shell.util import get_colored_text, os_name, rmtree, run_command, shell_name
 
 
 class MockProcess:
@@ -166,3 +167,24 @@ class TestRunCommand:
         # Mock shell_name
         with pytest.raises(ValueError, match="Unsupported shell: unsupported_shell"):
             run_command("echo 'Hello, World!'")
+
+
+class TestRmTree:
+    def test_rmtree_read_only_directories(self, tmp_path):
+        a_dir = tmp_path / "a"
+        b_dir = a_dir / "b"
+        c_dir = b_dir / "c"
+        a_file = c_dir / "a"
+
+        c_dir.mkdir(parents=True, exist_ok=True)
+        a_file.touch()
+
+        mode = a_dir.stat().st_mode
+        mode_no_w = mode & ~(stat.S_IWUSR | stat.S_IWGRP | stat.S_IWOTH)
+        c_dir.chmod(mode_no_w)
+        b_dir.chmod(mode_no_w)
+        a_dir.chmod(mode_no_w)
+
+        rmtree(a_dir)
+
+        assert not a_dir.exists()
