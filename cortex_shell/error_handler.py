@@ -7,6 +7,7 @@ import traceback
 from typing import IO, TYPE_CHECKING, Any
 
 from . import constants as C  # noqa: N812
+from .errors import FatalError
 
 if TYPE_CHECKING:
     from types import TracebackType
@@ -21,15 +22,21 @@ class ErrorHandler:
         exc_type: type[BaseException] | None,
         exc_value: BaseException | None,
         tb: TracebackType | None,
-    ) -> None:
-        if (
-            exc_type is not None
-            and exc_type.__module__ != "click.exceptions"
-            and not issubclass(exc_type, KeyboardInterrupt)
-        ):
-            msg, ret_code = "An unexpected error has occurred", 1
-            formatted = "".join(traceback.format_exception(exc_type, exc_value, tb))
-            self._log_and_exit(msg, ret_code, exc_value, formatted)
+    ) -> bool:
+        if exc_type is None:
+            return True
+
+        if exc_type.__module__ == "click.exceptions" or issubclass(exc_type, KeyboardInterrupt):
+            # those are handled by click
+            return False
+
+        if issubclass(exc_type, FatalError):
+            msg, ret_code = "An error has occurred", 1
+        else:
+            msg, ret_code = "An unexpected error has occurred", 3
+        formatted = "".join(traceback.format_exception(exc_type, exc_value, tb))
+        self._log_and_exit(msg, ret_code, exc_value, formatted)
+        return True
 
     @staticmethod
     def _log_and_exit(
@@ -39,8 +46,6 @@ class ErrorHandler:
         formatted: str,
     ) -> None:
         error_msg = f"{msg}: {type(exc).__name__}: ".encode() + ErrorHandler._force_bytes(exc) if exc else msg.encode()
-
-        ErrorHandler._write_line_b(error_msg)
 
         with contextlib.ExitStack():
             ErrorHandler._write_line("### version information")
