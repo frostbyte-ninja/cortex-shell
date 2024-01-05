@@ -3,12 +3,18 @@ from __future__ import annotations
 import itertools
 import os
 import shutil
+import sys
 from importlib import resources
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+import pytest
+
 if TYPE_CHECKING:
     import collections
+
+
+ignore_if_windows = pytest.mark.skipif(sys.platform == "win32", reason="windows")
 
 
 def all_combinations(*input_values):

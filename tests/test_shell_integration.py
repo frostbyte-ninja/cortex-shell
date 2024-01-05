@@ -1,11 +1,10 @@
 import subprocess
-import sys
 
 import pytest
 
 from cortex_shell import constants as C  # noqa: N812
 from cortex_shell.util import get_resource_file
-from testing.util import get_path_to_shell, get_test_resource_file, prepend_dir_to_path
+from testing.util import get_path_to_shell, get_test_resource_file, ignore_if_windows, prepend_dir_to_path
 
 
 class TestShellIntegration:
@@ -72,7 +71,7 @@ class TestShellIntegration:
 
         mock.assert_called_once_with('Your shell "unsupported_shell" is not supported.')
 
-    @pytest.mark.skipif(sys.platform == "win32", reason="does not work reliably on windows")
+    @ignore_if_windows
     def test_bash(self, mock_shell_integration, mock_executable):
         shell_name = "bash"
         shell_path = get_path_to_shell(shell_name)
