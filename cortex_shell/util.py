@@ -9,7 +9,7 @@ import sys
 from importlib import resources
 from pathlib import Path
 from tempfile import gettempdir
-from typing import Any, Callable, Protocol
+from typing import Any, Callable
 
 import distro
 import psutil
@@ -152,8 +152,3 @@ def is_tty() -> bool:
 
 def get_temp_dir() -> Path:
     return Path(gettempdir())
-
-
-class StringConvertible(Protocol):
-    def __str__(self) -> str:
-        pass
