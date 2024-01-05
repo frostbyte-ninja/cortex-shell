@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-import shutil
 from typing import TYPE_CHECKING, Any
 
 import typer
 
 from .configuration import cfg
-from .util import option_callback
+from .util import option_callback, rmtree
 from .yaml import yaml_dump, yaml_load
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -125,4 +124,4 @@ class ChatSession:
     @classmethod
     @option_callback
     def clear_chats_callback(cls, *_args: Any) -> None:
-        shutil.rmtree(cfg().chat_history_path())
+        rmtree(cfg().chat_history_path())
