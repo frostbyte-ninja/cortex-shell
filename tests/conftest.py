@@ -122,7 +122,7 @@ def mock_config_with_values(tmp_dir_factory):
 
 @pytest.fixture()
 def mock_shell_integration(mocker):
-    def _install(shell: str):
+    def _install(shell: str) -> None:
         mocker.patch(f"{C.PROJECT_MODULE}.util.shell_name", return_value=shell)
         with pytest.raises(typer.Exit):
             install_shell_integration(None, "x")

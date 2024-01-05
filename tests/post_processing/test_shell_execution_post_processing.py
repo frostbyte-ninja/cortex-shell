@@ -6,7 +6,7 @@ from cortex_shell.types import Message
 
 
 @pytest.fixture()
-def messages() -> list[Message]:
+def messages():
     return [
         Message(role="role1", content="Message 1"),
         Message(role="role2", content="Message 2"),
