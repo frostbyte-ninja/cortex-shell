@@ -8,18 +8,18 @@ readme = "README.md"
 license = "MIT"
 repository = "https://github.com/frostbyte-ninja/cortex-shell"
 classifiers = [
-    "Operating System :: OS Independent",
-    "Topic :: Software Development",
-    "License :: OSI Approved :: MIT License",
-    "Intended Audience :: Information Technology",
-    "Intended Audience :: System Administrators",
-    "Intended Audience :: Developers",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
+  "Operating System :: OS Independent",
+  "Topic :: Software Development",
+  "License :: OSI Approved :: MIT License",
+  "Intended Audience :: Information Technology",
+  "Intended Audience :: System Administrators",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
 ]
 
 [tool.poetry-dynamic-versioning]
@@ -35,7 +35,7 @@ openai = "^1.6.1"
 prompt_toolkit = "^3.0.43"
 psutil = "^5.9.1"
 pyyaml = "^6.0.1"
-rich =  "^13.1.0"
+rich = "^13.1.0"
 typer = "^0.9"
 
 [tool.poetry.group.test.dependencies]
@@ -54,9 +54,7 @@ cortex-shell = "cortex_shell.application:run"
 c-sh = "cortex_shell.application:run"
 
 [tool.pytest.ini_options]
-testpaths = [
-    "tests"
-]
+testpaths = ["tests"]
 timeout = 60
 
 [tool.ruff]
@@ -64,84 +62,84 @@ line-length = 120
 target-version = "py39"
 
 select = [
-    "A",
-    "B",
-    "C4",
-    "C90",
-    "COM",
-    "DTZ",
-    "E",
-    "ERA",
-    "F",
-    "FA",
-    "FLY",
-    "FURB",
-    "G",
-    "I",
-    "INP",
-    "INT",
-    "LOG",
-    "N",
-    "PERF",
-    "PGH",
-    "PIE",
-    "PL",
-    "PT",
-    "PTH",
-    "PYI",
-    "Q",
-    "RET",
-    "RSE",
-    "RUF",
-    "SIM",
-    "SLF",
-    "SLOT",
-    "T10",
-    "TCH",
-    "TD",
-    "TID",
-    "TRY",
-    "UP",
-    "W",
-    "YTT",
+  "A",
+  "B",
+  "C4",
+  "C90",
+  "COM",
+  "DTZ",
+  "E",
+  "ERA",
+  "F",
+  "FA",
+  "FLY",
+  "FURB",
+  "G",
+  "I",
+  "INP",
+  "INT",
+  "LOG",
+  "N",
+  "PERF",
+  "PGH",
+  "PIE",
+  "PL",
+  "PT",
+  "PTH",
+  "PYI",
+  "Q",
+  "RET",
+  "RSE",
+  "RUF",
+  "SIM",
+  "SLF",
+  "SLOT",
+  "T10",
+  "TCH",
+  "TD",
+  "TID",
+  "TRY",
+  "UP",
+  "W",
+  "YTT",
 ]
 
 ignore = [
-    "TD003",   # missing-todo-link
-    "E501",    # line too long
-    "PLC0414", # useless-import-alias
-    "RUF012",  # mutable-class-default
-    "SIM112",  # uncapitalized-environment-variables
-    "TID252",  # relative-imports
-    "TRY003",  # raise-vanilla-args
-    "RET505",  # superfluous-else-return
-    "RET508",  # superfluous-else-break
+  "TD003",   # missing-todo-link
+  "E501",    # line too long
+  "PLC0414", # useless-import-alias
+  "RUF012",  # mutable-class-default
+  "SIM112",  # uncapitalized-environment-variables
+  "TID252",  # relative-imports
+  "TRY003",  # raise-vanilla-args
+  "RET505",  # superfluous-else-return
+  "RET508",  # superfluous-else-break
 
-    # disabled because of formatting
-    "W191",    # tab-indentation
-    "E111",    # indentation-with-invalid-multiple
-    "E114",    # indentation-with-invalid-multiple-comment
-    "E117",    # over-indented
-    "D206",    # indent-with-spaces
-    "D300",    # triple-single-quotes
-    "Q000",    # bad-quotes-inline-string
-    "Q001",    # bad-quotes-multiline-string
-    "Q002",    # bad-quotes-docstring
-    "Q003",    # avoidable-escaped-quote
-    "COM812",  # missing-trailing-comma
-    "COM819",  # prohibited-trailing-comma
-    "ISC001",  # single-line-implicit-string-concatenation
-    "ISC002",  # multi-line-implicit-string-concatenation
+  # disabled because of formatting
+  "W191",   # tab-indentation
+  "E111",   # indentation-with-invalid-multiple
+  "E114",   # indentation-with-invalid-multiple-comment
+  "E117",   # over-indented
+  "D206",   # indent-with-spaces
+  "D300",   # triple-single-quotes
+  "Q000",   # bad-quotes-inline-string
+  "Q001",   # bad-quotes-multiline-string
+  "Q002",   # bad-quotes-docstring
+  "Q003",   # avoidable-escaped-quote
+  "COM812", # missing-trailing-comma
+  "COM819", # prohibited-trailing-comma
+  "ISC001", # single-line-implicit-string-concatenation
+  "ISC002", # multi-line-implicit-string-concatenation
 ]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = [
-    "SLF001",  # private-member-access
-    "PLR2004", # magic-value-comparison
-    "PLR0904", # too-many-public-methods
-    "PLR6301", # no-self-use
-    "PLR0913", # too-many-arguments
-    "PLR0917", # too-many-positional
+  "SLF001",  # private-member-access
+  "PLR2004", # magic-value-comparison
+  "PLR0904", # too-many-public-methods
+  "PLR6301", # no-self-use
+  "PLR0913", # too-many-arguments
+  "PLR0917", # too-many-positional
 ]
 
 [tool.ruff.lint.pylint]
@@ -156,23 +154,15 @@ incremental = false
 disallow_subclassing_any = false
 
 [[tool.mypy.overrides]]
-module = [
-    "yaml",
-]
+module = ["yaml"]
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
-module = [
-    "tests.*",
-    "testing.*",
-]
+module = ["tests.*", "testing.*"]
 disable_error_code = ["no-untyped-call", "no-untyped-def", "attr-defined", "no-any-return"]
 
 [tool.coverage.run]
-omit = [
-    "__main__.py",
-    "__init__.py",
-]
+omit = ["__main__.py", "__init__.py"]
 
 [build-system]
 requires = ["poetry_core>=1.2.0", "poetry-dynamic-versioning>=1.2.0,<2.0.0"]
