@@ -8,7 +8,7 @@ import cfgv
 import yaml
 
 if TYPE_CHECKING:
-    from .util import StringConvertible
+    from .types import StringConvertible
 
 try:
     from yaml import CDumper as Dumper
