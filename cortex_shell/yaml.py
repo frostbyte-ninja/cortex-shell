@@ -7,13 +7,13 @@ from typing import TYPE_CHECKING, Any
 import cfgv
 import yaml
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from .types import StringConvertible
 
 try:
     from yaml import CDumper as Dumper
     from yaml import CLoader as Loader
-except ImportError:
+except ImportError:  # pragma: no cover
     from yaml import Dumper, Loader
 
 yaml_load = functools.partial(yaml.load, Loader=Loader)

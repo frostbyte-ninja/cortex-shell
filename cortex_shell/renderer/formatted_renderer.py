@@ -9,7 +9,7 @@ from .irenderer import IRenderer
 
 # mypy: disable-error-code="union-attr"
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from ..role import Role
 
 

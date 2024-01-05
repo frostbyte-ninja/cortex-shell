@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 
 
-class IRenderer(ABC):
+class IRenderer(ABC):  # pragma: no cover
     @abstractmethod
     def __enter__(self) -> None:
         raise NotImplementedError

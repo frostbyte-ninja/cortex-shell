@@ -18,7 +18,7 @@ from prompt_toolkit.layout.controls import (
     FormattedTextControl,
 )
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from collections.abc import Sequence
 
     from prompt_toolkit.key_binding.key_processor import KeyPressEvent

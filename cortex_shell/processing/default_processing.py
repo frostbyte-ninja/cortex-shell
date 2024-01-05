@@ -6,7 +6,7 @@ from ..history.volatile_history import VolatileHistory
 from ..post_processing.no_post_processing import NoPostProcessing
 from .iprocessing import IProcessing
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from ..history.ihistory import IHistory
     from ..post_processing.ipost_processing import IPostProcessing
     from ..role import Role

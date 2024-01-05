@@ -8,7 +8,7 @@ from openai.types.chat import ChatCompletionMessageParam
 from .. import errors
 from .base_client import BaseClient
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from collections.abc import Generator
 
     from ..types import Message

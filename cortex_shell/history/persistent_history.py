@@ -8,7 +8,7 @@ from rich.rule import Rule
 from ..chat_session import ChatSession
 from ..history.ihistory import IHistory
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from pathlib import Path
 
     from ..types import Message

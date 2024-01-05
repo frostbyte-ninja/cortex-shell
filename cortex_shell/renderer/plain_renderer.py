@@ -7,7 +7,7 @@ from prompt_toolkit import print_formatted_text
 from ..util import get_colored_text
 from .irenderer import IRenderer
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from ..role import Role
 
 

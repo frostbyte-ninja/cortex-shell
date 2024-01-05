@@ -9,7 +9,7 @@ from typing import IO, TYPE_CHECKING, Any
 from . import constants as C  # noqa: N812
 from .errors import FatalError
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from types import TracebackType
 
 

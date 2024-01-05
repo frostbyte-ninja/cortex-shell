@@ -18,7 +18,7 @@ from .ipost_processing import IPostProcessing
 
 # mypy: disable-error-code="union-attr"
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from ..client.iclient import IClient
     from ..handlers.ihandler import IHandler
     from ..renderer.irenderer import IRenderer

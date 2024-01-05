@@ -168,6 +168,12 @@ module = [
 ]
 disable_error_code = ["no-untyped-call", "no-untyped-def", "attr-defined", "no-any-return"]
 
+[tool.coverage.run]
+omit = [
+    "__main__.py",
+    "__init__.py",
+]
+
 [build-system]
 requires = ["poetry_core>=1.2.0", "poetry-dynamic-versioning>=1.2.0,<2.0.0"]
 build-backend = "poetry_dynamic_versioning.backend"
