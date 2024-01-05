@@ -78,7 +78,7 @@ class ShellExecutionPostProcessing(IPostProcessing):
             event.app.exit(result=options.current_value)
 
         @bindings.add("d")  # type: ignore[misc]
-        def describe(event: KeyPressEvent) -> None:
+        def _describe(event: KeyPressEvent) -> None:
             options.current_value = Option.DESCRIBE
             event.app.exit(result=options.current_value)
 
