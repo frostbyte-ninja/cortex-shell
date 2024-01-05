@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 import typer
 from click.testing import Result
@@ -13,7 +15,7 @@ def app(mocker, mock_client, monkeypatch):
     monkeypatch.setenv("TERM", "dumb")  # disable colored output
     mocker.patch(f"{C.PROJECT_MODULE}.application.Application._get_client", new=mock_client)
 
-    def invoke_app(prompt: str = "", **kwargs) -> Result:
+    def invoke_app(prompt: str = "", **kwargs: Any) -> Result:
         runner = CliRunner()
         app = typer.Typer()
         app.command()(Application)

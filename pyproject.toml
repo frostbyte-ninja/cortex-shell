@@ -165,7 +165,7 @@ module = [
     "tests.*",
     "testing.*",
 ]
-ignore_errors = true
+disable_error_code = ["no-untyped-call", "no-untyped-def", "attr-defined", "no-any-return"]
 
 [build-system]
 requires = ["poetry_core>=1.2.0", "poetry-dynamic-versioning>=1.2.0,<2.0.0"]

@@ -1,5 +1,3 @@
-from pytest_mock import MockerFixture
-
 from cortex_shell.role import Options, Output, Role, ShellRole
 
 
@@ -30,7 +28,7 @@ class TestRole:
         assert output.color == "blue"
         assert output.theme == "dark"
 
-    def test_role_fill_from(self, mocker: MockerFixture):
+    def test_role_fill_from(self):
         options1 = Options(api="api1", model="model1")
         options2 = Options(temperature=0.7, top_probability=0.8)
         output1 = Output(stream=True, formatted=False)

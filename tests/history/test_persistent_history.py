@@ -2,6 +2,7 @@ import pytest
 
 from cortex_shell import constants as C  # noqa: N812
 from cortex_shell.history.persistent_history import PersistentHistory
+from cortex_shell.types import Message
 
 
 @pytest.fixture()
@@ -13,7 +14,7 @@ def persistent_history(mocker, mock_chat_session, tmp_dir_factory):
 
 class TestPersistentHistory:
     def test_get_messages(self, persistent_history, mock_chat_session):
-        messages = [{"user": "test_user", "content": "test_content"}]
+        messages = [Message(role="test_user", content="test_content")]
         mock_chat_session.get_messages.return_value = messages
 
         result = persistent_history.get_messages()
@@ -21,7 +22,7 @@ class TestPersistentHistory:
         assert messages == result
 
     def test_process_messages(self, persistent_history, mock_chat_session):
-        messages = [{"user": "test_user", "content": "test_content"}]
+        messages = [Message(role="test_user", content="test_content")]
 
         persistent_history.process_messages(messages)
 

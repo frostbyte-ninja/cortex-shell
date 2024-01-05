@@ -24,9 +24,12 @@ class TestShellIntegration:
 
         assert shell_config_path.is_file()
 
-        with shell_config_path.open("r") as written_file, get_resource_file(shell, "shell_integrations").open(
-            "r",
-        ) as original_file:
+        with (
+            shell_config_path.open("r") as written_file,
+            get_resource_file(shell, "shell_integrations").open(
+                "r",
+            ) as original_file,
+        ):
             original_content = f"# cortex-shell integration\n{original_file.read().strip()}\n# cortex-shell integration"
             written_content = written_file.read()
             assert original_content in written_content
@@ -51,9 +54,12 @@ class TestShellIntegration:
         # Test updating the existing integration
         mock_shell_integration(shell)
 
-        with shell_config_path.open("r") as written_file, get_resource_file(shell, "shell_integrations").open(
-            "r",
-        ) as updated_file:
+        with (
+            shell_config_path.open("r") as written_file,
+            get_resource_file(shell, "shell_integrations").open(
+                "r",
+            ) as updated_file,
+        ):
             updated_content = f"# cortex-shell integration\n{updated_file.read().strip()}\n# cortex-shell integration"
             written_content = written_file.read()
             assert updated_content in written_content
@@ -77,14 +83,12 @@ class TestShellIntegration:
 
         try:
             output = subprocess.check_output(
-                [shell_path, get_test_resource_file(shell_name, "shell_integration_wrappers")],
+                [str(shell_path), get_test_resource_file(shell_name, "shell_integration_wrappers")],
                 stderr=subprocess.STDOUT,
                 timeout=5,
                 env=prepend_dir_to_path(mock_executable.parent),
-            )
+            ).decode("utf-8")
         except subprocess.CalledProcessError as e:
-            output = e.output
+            output = e.output.decode("utf-8")
 
-        output = output.decode("utf-8")
-
-        assert str(output) == "COMPLETION"
+        assert output == "COMPLETION"

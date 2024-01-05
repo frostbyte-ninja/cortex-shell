@@ -1,4 +1,5 @@
 from cortex_shell.post_processing.file_output_post_processing import FileOutputPostProcessing
+from cortex_shell.types import Message
 
 
 class TestFileOutputPostProcessing:
@@ -6,9 +7,9 @@ class TestFileOutputPostProcessing:
         file = tmp_file_factory.get()
 
         messages = [
-            {"content": "Message 1"},
-            {"content": "Message 2"},
-            {"content": "Message 3"},
+            Message(role="test_user", content="Message 1"),
+            Message(role="test_user", content="Message 2"),
+            Message(role="test_user", content="Message 3"),
         ]
 
         file_output_post_processing = FileOutputPostProcessing(file)
