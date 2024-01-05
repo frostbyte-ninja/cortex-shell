@@ -8,7 +8,7 @@ from ..role import FILE_ROLE, Role
 from ..types import Message
 from .iprocessing import IProcessing
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from pathlib import Path
 
     from ..history.ihistory import IHistory

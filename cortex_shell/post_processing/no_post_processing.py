@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from .ipost_processing import IPostProcessing
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from ..types import Message
 
 

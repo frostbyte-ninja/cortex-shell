@@ -9,7 +9,7 @@ from prompt_toolkit.keys import Keys
 
 from .default_handler import DefaultHandler
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from ..client.iclient import IClient
     from ..processing.iprocessing import IProcessing
     from ..renderer.irenderer import IRenderer

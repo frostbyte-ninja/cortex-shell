@@ -9,7 +9,7 @@ from .configuration import cfg
 from .util import option_callback
 from .yaml import yaml_dump, yaml_load
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from pathlib import Path
 
     from .role import Role
