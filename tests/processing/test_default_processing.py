@@ -9,8 +9,8 @@ def default_processing(mock_role, mock_history, mock_post_processing):
 
 
 class TestDefaultProcessing:
-    def test_get_messages(self, mock_history, default_processing):
-        mock_history.get_messages.return_value = []
+    def test_messages(self, mock_history, default_processing):
+        mock_history.messages.return_value = []
 
         prompt = "Test prompt"
 

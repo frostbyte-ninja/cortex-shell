@@ -12,7 +12,7 @@ class VolatileHistory(IHistory):
     def __init__(self) -> None:
         self._messages: list[Message] = []
 
-    def get_messages(self) -> list[Message]:
+    def messages(self) -> list[Message]:
         return self._messages
 
     def process_messages(self, messages: list[Message]) -> None:

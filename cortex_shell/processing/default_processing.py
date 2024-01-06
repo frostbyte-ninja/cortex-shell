@@ -25,7 +25,7 @@ class DefaultProcessing(IProcessing):
         self._post_processing = post_processing if post_processing else NoPostProcessing()
 
     def get_messages(self, prompt: str) -> list[Message]:
-        messages = self._history.get_messages()
+        messages = self._history.messages()
         if not messages:
             messages = [{"role": "system", "content": self._role.description}]
         messages.append({"role": "user", "content": prompt})

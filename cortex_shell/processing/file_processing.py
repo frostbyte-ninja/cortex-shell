@@ -30,7 +30,7 @@ class FileProcessing(IProcessing):
         self._files_added_to_history = False
 
     def get_messages(self, prompt: str) -> list[Message]:
-        messages = self._history.get_messages()
+        messages = self._history.messages()
 
         if not self._files_added_to_history or not messages:
             messages.append({"role": "system", "content": FILE_ROLE})

@@ -6,18 +6,16 @@ from cortex_shell.types import Message
 
 
 @pytest.fixture()
-def persistent_history(mocker, mock_chat_session, tmp_dir_factory):
-    persistent_history = PersistentHistory("test_chat_id", 100, tmp_dir_factory.get())
-    mocker.patch.object(persistent_history, "_chat_session", mock_chat_session)
-    return persistent_history
+def persistent_history(mock_chat_session_manager, tmp_dir_factory):
+    return PersistentHistory("test_chat_id", mock_chat_session_manager)
 
 
 class TestPersistentHistory:
-    def test_get_messages(self, persistent_history, mock_chat_session):
+    def test_messages(self, persistent_history, mock_chat_session):
         messages = [Message(role="test_user", content="test_content")]
-        mock_chat_session.get_messages.return_value = messages
+        mock_chat_session.messages.return_value = messages
 
-        result = persistent_history.get_messages()
+        result = persistent_history.messages()
 
         assert messages == result
 
@@ -28,7 +26,7 @@ class TestPersistentHistory:
 
         mock_chat_session.write_messages.assert_called_once_with(messages)
 
-    def test_print_history(self, persistent_history, mock_chat_session, mocker):
+    def test_print_history(self, persistent_history, mock_chat_session, mock_chat_session_manager, mocker):
         mock_chat_session.exists.return_value = True
 
         mock = mocker.patch(f"{C.PROJECT_MODULE}.history.persistent_history.rich_print")
@@ -36,4 +34,4 @@ class TestPersistentHistory:
         persistent_history.print_history()
 
         mock.assert_called()
-        mock_chat_session.show_messages.assert_called_once_with(persistent_history._chat_session)
+        mock_chat_session_manager.print_messages.assert_called_once_with(mock_chat_session)
