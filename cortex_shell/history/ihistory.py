@@ -9,7 +9,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 class IHistory(ABC):  # pragma: no cover
     @abstractmethod
-    def get_messages(self) -> list[Message]:
+    def messages(self) -> list[Message]:
         raise NotImplementedError
 
     @abstractmethod

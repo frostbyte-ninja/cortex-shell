@@ -11,8 +11,8 @@ def file_processing(mock_role, mock_history, mock_post_processing, tmp_file_fact
 
 
 class TestFileProcessing:
-    def test_get_messages(self, tmp_file_factory, mock_role, mock_history, mock_post_processing):
-        mock_history.get_messages.return_value = []
+    def test_messages(self, tmp_file_factory, mock_role, mock_history, mock_post_processing):
+        mock_history.messages.return_value = []
 
         file = tmp_file_factory.get()
         file.write_text("This is a test file.")

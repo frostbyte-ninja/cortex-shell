@@ -6,7 +6,6 @@ import typer
 from click import UsageError
 
 from .cache import Cache
-from .chat_session import ChatSession
 from .client.chatgpt_client import ChatGptClient
 from .client.iclient import IClient
 from .configuration import cfg
@@ -29,6 +28,7 @@ from .renderer.formatted_renderer import FormattedRenderer
 from .renderer.irenderer import IRenderer
 from .renderer.plain_renderer import PlainRenderer
 from .role import ShellRole
+from .session.chat_session_manager import ChatSessionManager
 from .util import get_stdin, has_stdin, install_shell_integration, is_tty, print_version_callback
 
 # mypy: disable-error-code="union-attr"
@@ -172,7 +172,7 @@ class Application:
                 "--show-chat",
                 show_default=False,
                 help="Show all messages from a provided chat id.",
-                callback=ChatSession.show_messages_callback,
+                callback=ChatSessionManager.show_chat_callback,
                 rich_help_panel="Chat Options",
             ),
         ] = None,
@@ -182,7 +182,7 @@ class Application:
                 "--delete-chat",
                 show_default=False,
                 help="Delete a single chat with id.",
-                callback=ChatSession.delete_messages_callback,
+                callback=ChatSessionManager.delete_chat_callback,
                 rich_help_panel="Chat Options",
             ),
         ] = None,
@@ -191,7 +191,7 @@ class Application:
             typer.Option(
                 "--list-chats",
                 help="List all existing chat ids.",
-                callback=ChatSession.list_ids_callback,
+                callback=ChatSessionManager.list_chats_callback,
                 rich_help_panel="Chat Options",
             ),
         ] = False,
@@ -201,7 +201,7 @@ class Application:
                 "--clear-chats",
                 show_default=False,
                 help="Clear all chats.",
-                callback=ChatSession.clear_chats_callback,
+                callback=ChatSessionManager.clear_chats_callback,
                 rich_help_panel="Chat Options",
             ),
         ] = False,
@@ -345,7 +345,8 @@ class Application:
 
     def _get_history(self) -> IHistory:
         if self._chat_id:
-            return PersistentHistory(self._chat_id, cfg().chat_history_size(), cfg().chat_history_path())
+            session_manager = ChatSessionManager(cfg().chat_history_path(), cfg().chat_history_size())
+            return PersistentHistory(self._chat_id, session_manager)
         else:
             return VolatileHistory()
 

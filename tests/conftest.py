@@ -8,7 +8,6 @@ import yaml
 
 from cortex_shell import configuration
 from cortex_shell import constants as C  # noqa: N812
-from cortex_shell.chat_session import ChatSession
 from cortex_shell.client.iclient import IClient
 from cortex_shell.configuration.config import Config, _get_default_directory, set_cfg
 from cortex_shell.history.ihistory import IHistory
@@ -16,6 +15,8 @@ from cortex_shell.post_processing.ipost_processing import IPostProcessing
 from cortex_shell.processing.iprocessing import IProcessing
 from cortex_shell.renderer.irenderer import IRenderer
 from cortex_shell.role import Options, Output, Role, ShellRole
+from cortex_shell.session.chat_session import ChatSession
+from cortex_shell.session.chat_session_manager import ChatSessionManager
 from cortex_shell.util import install_shell_integration
 
 
@@ -161,10 +162,17 @@ def mock_chat_session(mocker):
 
 
 @pytest.fixture()
+def mock_chat_session_manager(mocker, mock_chat_session):
+    manager = mocker.MagicMock(spec=ChatSessionManager)
+    manager.get_session.return_value = mock_chat_session
+    return manager
+
+
+@pytest.fixture()
 def mock_history(mocker):
-    return mocker.Mock(spec=IHistory)
+    return mocker.MagicMock(spec=IHistory)
 
 
 @pytest.fixture()
 def mock_post_processing(mocker):
-    return mocker.Mock(spec=IPostProcessing)
+    return mocker.MagicMock(spec=IPostProcessing)
