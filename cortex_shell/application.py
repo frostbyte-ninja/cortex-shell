@@ -37,18 +37,26 @@ from .util import get_stdin, has_stdin, install_shell_integration, is_tty, print
 class Application:
     def __init__(  # noqa: PLR0913, PLR0917
         self,
-        prompt: Annotated[str, typer.Argument(show_default=False, help="The prompt to generate completions for.")] = "",
+        prompt: Annotated[
+            str,
+            typer.Argument(show_default=False, help="Enter the prompt for generating completions."),
+        ] = "",
         # input options
         editor: Annotated[
             bool,
-            typer.Option("--editor", "-e", help="Open $EDITOR to provide a prompt.", rich_help_panel="Input Options"),
+            typer.Option(
+                "--editor",
+                "-e",
+                help="Open the default text editor to provide a prompt.",
+                rich_help_panel="Input Options",
+            ),
         ] = False,
         repl: Annotated[
             bool,
             typer.Option(
                 "--repl",
                 "-r",
-                help="Start a REPL (Read-eval-print loop) session.",
+                help="Initiate a REPL (Read-eval-print loop) session.",
                 rich_help_panel="Input Options",
             ),
         ] = False,
@@ -63,18 +71,22 @@ class Application:
                 writable=False,
                 readable=True,
                 resolve_path=True,
-                help="Use one or multiple files as additional input.",
+                help="Use one or more files as additional input.",
                 rich_help_panel="Input Options",
             ),
         ] = [],  # noqa: B006
         # model options
         api: Annotated[
             Optional[str],  # noqa: FA100
-            typer.Option(show_default=False, help="API to use.", rich_help_panel="Model Options"),
+            typer.Option(show_default=False, help="Select the API to be used.", rich_help_panel="Model Options"),
         ] = None,
         model: Annotated[
             Optional[str],  # noqa: FA100
-            typer.Option(show_default=False, help="Large language model to use.", rich_help_panel="Model Options"),
+            typer.Option(
+                show_default=False,
+                help="Choose the large language model to be utilized.",
+                rich_help_panel="Model Options",
+            ),
         ] = None,
         temperature: Annotated[
             Optional[float],  # noqa: FA100
@@ -82,7 +94,7 @@ class Application:
                 min=0.0,
                 max=2.0,
                 show_default=False,
-                help="Randomness of generated output.",
+                help="Adjust the randomness of the generated output.",
                 rich_help_panel="Model Options",
             ),
         ] = None,
@@ -92,7 +104,7 @@ class Application:
                 min=0.0,
                 max=1.0,
                 show_default=False,
-                help="Limits highest probable tokens (words).",
+                help="Limit the highest probable tokens (words).",
                 rich_help_panel="Model Options",
             ),
         ] = None,
@@ -101,7 +113,7 @@ class Application:
             Optional[bool],  # noqa: FA100
             typer.Option(
                 "--stream/--no-stream",
-                help="Enable stream output.",
+                help="Enable or disable stream output.",
                 rich_help_panel="Output Options",
                 show_default=False,
             ),
@@ -110,7 +122,7 @@ class Application:
             Optional[bool],  # noqa: FA100
             typer.Option(
                 "--formatted/--no-formatted",
-                help="Enable formatted output.",
+                help="Enable or disable formatted output.",
                 rich_help_panel="Output Options",
                 show_default=False,
             ),
@@ -118,7 +130,7 @@ class Application:
         color: Annotated[
             Optional[str],  # noqa: FA100
             typer.Option(
-                help="Output color.",
+                help="Set the output color.",
                 rich_help_panel="Output Options",
                 show_default=False,
             ),
@@ -126,7 +138,7 @@ class Application:
         theme: Annotated[
             Optional[str],  # noqa: FA100
             typer.Option(
-                help="Output theme.",
+                help="Choose the output theme.",
                 rich_help_panel="Output Options",
                 show_default=False,
             ),
@@ -137,20 +149,24 @@ class Application:
                 "--output",
                 "-o",
                 show_default=False,
-                help="A file where the last message from the assistant will be stored.",
+                help="Specify a file to store the assistant's last message.",
                 rich_help_panel="Output Options",
             ),
         ] = None,
         # cache options
         cache: Annotated[
             Optional[bool],  # noqa: FA100
-            typer.Option(show_default=False, help="Cache completion results.", rich_help_panel="Cache Options"),
+            typer.Option(
+                show_default=False,
+                help="Enable or disable caching of completion results.",
+                rich_help_panel="Cache Options",
+            ),
         ] = None,
         _clear_cache: Annotated[
             bool,
             typer.Option(
                 "--clear-cache",
-                help="Clear cache.",
+                help="Clear the cache.",
                 callback=Cache.clear_cache_callback,
                 rich_help_panel="Cache Options",
             ),
@@ -162,7 +178,7 @@ class Application:
                 "--id",
                 "-i",
                 show_default=False,
-                help="Follow conversation with an id.",
+                help="Start or continue a conversation with a specific chat ID.",
                 rich_help_panel="Chat Options",
             ),
         ] = None,
@@ -171,7 +187,7 @@ class Application:
             typer.Option(
                 "--show-chat",
                 show_default=False,
-                help="Show all messages from a provided chat id.",
+                help="Display all messages from the provided chat ID.",
                 callback=ChatSessionManager.show_chat_callback,
                 rich_help_panel="Chat Options",
             ),
@@ -181,7 +197,7 @@ class Application:
             typer.Option(
                 "--delete-chat",
                 show_default=False,
-                help="Delete a single chat with id.",
+                help="Delete a single chat with the specified ID.",
                 callback=ChatSessionManager.delete_chat_callback,
                 rich_help_panel="Chat Options",
             ),
@@ -190,7 +206,7 @@ class Application:
             bool,
             typer.Option(
                 "--list-chats",
-                help="List all existing chat ids.",
+                help="List all existing chat IDs.",
                 callback=ChatSessionManager.list_chats_callback,
                 rich_help_panel="Chat Options",
             ),
@@ -200,7 +216,7 @@ class Application:
             typer.Option(
                 "--clear-chats",
                 show_default=False,
-                help="Clear all chats.",
+                help="Delete all chats.",
                 callback=ChatSessionManager.clear_chats_callback,
                 rich_help_panel="Chat Options",
             ),
@@ -208,7 +224,7 @@ class Application:
         # role options
         code: Annotated[
             bool,
-            typer.Option("--code", "-c", help="Generate only code.", rich_help_panel="Role Options"),
+            typer.Option("--code", "-c", help="Generate code only.", rich_help_panel="Role Options"),
         ] = False,
         describe_shell: Annotated[
             bool,
@@ -223,7 +239,7 @@ class Application:
             typer.Option(
                 "--role",
                 show_default=False,
-                help="System role for GPT model.",
+                help="Define the system role for the large language model.",
                 rich_help_panel="Role Options",
             ),
         ] = None,
@@ -232,7 +248,7 @@ class Application:
             bool,
             typer.Option(
                 "--install-integration",
-                help="Install shell integration (Fish, Bash and ZSH supported).",
+                help="Install shell integration (Fish, Bash, and ZSH supported).",
                 callback=install_shell_integration,
                 rich_help_panel="Other Options",
             ),
@@ -241,7 +257,7 @@ class Application:
             bool,
             typer.Option(
                 "--version",
-                help="Show version.",
+                help="Display the current version.",
                 callback=print_version_callback,
                 rich_help_panel="Other Options",
             ),

@@ -494,53 +494,57 @@ By using command-line options, you can easily customize CortexShell's behavior o
  Usage: cortex-shell [OPTIONS] [PROMPT]
 
 ╭─ Arguments ──────────────────────────────────────────────────────────────────╮
-│   prompt      [PROMPT]  The prompt to generate completions for.              │
+│   prompt      [PROMPT]  Enter the prompt for generating completions.         │
 ╰──────────────────────────────────────────────────────────────────────────────╯
 ╭─ Options ────────────────────────────────────────────────────────────────────╮
 │ --help          Show this message and exit.                                  │
 ╰──────────────────────────────────────────────────────────────────────────────╯
 ╭─ Input Options ──────────────────────────────────────────────────────────────╮
-│ --editor  -e            Open $EDITOR to provide a prompt.                    │
-│ --repl    -r            Start a REPL (Read-eval-print loop) session.         │
-│ --file    -f      FILE  Use one or multiple files as additional input.       │
+│ --editor  -e            Open the default text editor to provide a prompt.    │
+│ --repl    -r            Initiate a REPL (Read-eval-print loop) session.      │
+│ --file    -f      FILE  Use one or more files as additional input.           │
 ╰──────────────────────────────────────────────────────────────────────────────╯
 ╭─ Model Options ──────────────────────────────────────────────────────────────╮
-│ --api                    TEXT                      API to use.               │
-│ --model                  TEXT                      Large language model to   │
-│                                                    use.                      │
-│ --temperature            FLOAT RANGE               Randomness of generated   │
-│                          [0.0<=x<=2.0]             output.                   │
-│ --top-probability        FLOAT RANGE               Limits highest probable   │
-│                          [0.0<=x<=1.0]             tokens (words).           │
+│ --api                    TEXT                      Select the API to be      │
+│                                                    used.                     │
+│ --model                  TEXT                      Choose the large language │
+│                                                    model to be utilized.     │
+│ --temperature            FLOAT RANGE               Adjust the randomness of  │
+│                          [0.0<=x<=2.0]             the generated output.     │
+│ --top-probability        FLOAT RANGE               Limit the highest         │
+│                          [0.0<=x<=1.0]             probable tokens (words).  │
 ╰──────────────────────────────────────────────────────────────────────────────╯
 ╭─ Output Options ─────────────────────────────────────────────────────────────╮
-│ --stream         --no-stream             Enable stream output.               │
-│ --formatted      --no-formatted          Enable formatted output.            │
-│ --color                            TEXT  Output color.                       │
-│ --theme                            TEXT  Output theme.                       │
-│ --output     -o                    PATH  A file where the last message from  │
-│                                          the assistant will be stored.       │
+│ --stream         --no-stream             Enable or disable stream output.    │
+│ --formatted      --no-formatted          Enable or disable formatted output. │
+│ --color                            TEXT  Set the output color.               │
+│ --theme                            TEXT  Choose the output theme.            │
+│ --output     -o                    PATH  Specify a file to store the         │
+│                                          assistant's last message.           │
 ╰──────────────────────────────────────────────────────────────────────────────╯
 ╭─ Cache Options ──────────────────────────────────────────────────────────────╮
-│ --cache          --no-cache      Cache completion results.                   │
-│ --clear-cache                    Clear cache.                                │
+│ --cache          --no-cache      Enable or disable caching of completion     │
+│                                  results.                                    │
+│ --clear-cache                    Clear the cache.                            │
 ╰──────────────────────────────────────────────────────────────────────────────╯
 ╭─ Chat Options ───────────────────────────────────────────────────────────────╮
-│ --id           -i      TEXT  Follow conversation with an id.                 │
-│ --show-chat            TEXT  Show all messages from a provided chat id.      │
-│ --delete-chat          TEXT  Delete a single chat with id.                   │
-│ --list-chats                 List all existing chat ids.                     │
-│ --clear-chats                Clear all chats.                                │
+│ --id           -i      TEXT  Start or continue a conversation with a         │
+│                              specific chat ID.                               │
+│ --show-chat            TEXT  Display all messages from the provided chat ID. │
+│ --delete-chat          TEXT  Delete a single chat with the specified ID.     │
+│ --list-chats                 List all existing chat IDs.                     │
+│ --clear-chats                Delete all chats.                               │
 ╰──────────────────────────────────────────────────────────────────────────────╯
 ╭─ Role Options ───────────────────────────────────────────────────────────────╮
-│ --code            -c            Generate only code.                          │
+│ --code            -c            Generate code only.                          │
 │ --describe-shell  -d            Describe a shell command.                    │
 │ --shell           -s            Generate and execute shell commands.         │
-│ --role                    TEXT  System role for GPT model.                   │
+│ --role                    TEXT  Define the system role for the large         │
+│                                 language model.                              │
 ╰──────────────────────────────────────────────────────────────────────────────╯
 ╭─ Other Options ──────────────────────────────────────────────────────────────╮
-│ --install-integration          Install shell integration (Fish, Bash and ZSH │
-│                                supported)                                    │
-│ --version                      Show version.                                 │
+│ --install-integration          Install shell integration (Fish, Bash, and    │
+│                                ZSH supported).                               │
+│ --version                      Display the current version.                  │
 ╰──────────────────────────────────────────────────────────────────────────────╯
 ```
