@@ -69,13 +69,15 @@ class TestDefaultConfig:
         assert mock_default_config.request_timeout() == 10
 
     def test_chat_history_path(self, mock_default_config):
-        assert mock_default_config.chat_history_path() == (get_temp_dir() / C.PROJECT_NAME / "history").resolve()
+        assert (
+            mock_default_config.chat_history_path() == (Path.home() / ".cache" / C.PROJECT_NAME / "history").resolve()
+        )
 
     def test_chat_history_size(self, mock_default_config):
         assert mock_default_config.chat_history_size() == 100
 
     def test_chat_cache_path(self, mock_default_config):
-        assert mock_default_config.chat_cache_path() == get_temp_dir() / C.PROJECT_NAME / "cache"
+        assert mock_default_config.chat_cache_path() == (get_temp_dir() / C.PROJECT_NAME / "cache").resolve()
 
     def test_chat_cache_size(self, mock_default_config):
         assert mock_default_config.chat_cache_size() == 100

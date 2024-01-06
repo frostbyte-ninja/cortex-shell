@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import cfgv
 
 from .. import constants as C  # noqa: N812
@@ -66,7 +68,11 @@ class ConfigSchemaBuilder:
         return cfgv.Map(
             None,
             None,
-            cfgv.Optional("chat_history_path", check_path, (get_temp_dir() / C.PROJECT_NAME / "history").resolve()),
+            cfgv.Optional(
+                "chat_history_path",
+                check_path,
+                (Path.home() / ".cache" / C.PROJECT_NAME / "history").resolve(),
+            ),
             cfgv.Optional("chat_history_size", cfgv.check_and(cfgv.check_int, check_greater_than_zero), 100),
             cfgv.Optional("chat_cache_path", check_path, (get_temp_dir() / C.PROJECT_NAME / "cache").resolve()),
             cfgv.Optional("chat_cache_size", cfgv.check_and(cfgv.check_int, check_greater_than_zero), 100),
