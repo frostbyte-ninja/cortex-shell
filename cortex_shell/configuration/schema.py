@@ -16,182 +16,187 @@ from .validators import (
     check_url,
 )
 
-CHAT_GPT_DICT = cfgv.Map(
-    None,
-    None,
-    cfgv.Optional("api_key", check_str_optional, ""),
-    cfgv.Optional("azure_endpoint", cfgv.check_and(check_str_optional, check_url), ""),
-    cfgv.Optional("azure_deployment", check_str_optional, ""),
-)
 
-APIS_DICT = cfgv.Map(
-    "apis",
-    None,
-    cfgv.OptionalRecurse(
-        "chatgpt",
-        CHAT_GPT_DICT,
-        {},
-    ),
-)
+class ConfigSchemaBuilder:
+    @classmethod
+    def build(cls) -> cfgv.Map:
+        chat_gpt_dict = cls._build_chat_gpt_dict()
+        apis_dict = cls._build_apis_dict(chat_gpt_dict)
+        session_dict = cls._build_session_dict()
+        misc_dict = cls._build_misc_dict(session_dict)
+        options_dict = cls._build_options_dict()
+        options_no_default_dict = cls._build_options_no_default_dict(options_dict)
+        output_dict = cls._build_output_dict()
+        output_dict_no_defaults = cls._build_output_dict_no_defaults(output_dict)
+        default_dict = cls._build_default_dict(options_dict, output_dict)
+        builtin_roles_dict = cls._build_builtin_roles_dict(options_no_default_dict)
+        role_dict = cls._build_role_dict(options_no_default_dict, output_dict_no_defaults)
 
-SESSION_DICT = cfgv.Map(
-    None,
-    None,
-    cfgv.Optional("chat_history_path", check_path, get_temp_dir() / C.PROJECT_NAME / "history"),
-    cfgv.Optional("chat_history_size", cfgv.check_and(cfgv.check_int, check_greater_than_zero), 100),
-    cfgv.Optional("chat_cache_path", check_path, get_temp_dir() / C.PROJECT_NAME / "cache"),
-    cfgv.Optional("chat_cache_size", cfgv.check_and(cfgv.check_int, check_greater_than_zero), 100),
-    cfgv.Optional("cache", cfgv.check_bool, True),
-    cfgv.NoAdditionalKeys(("chat_history_path", "chat_history_size", "chat_cache_path", "chat_cache_size", "cache")),
-)
+        return cfgv.Map(
+            "configuration",
+            None,
+            cfgv.OptionalRecurse("apis", apis_dict, {}),
+            cfgv.OptionalRecurse("misc", misc_dict, {}),
+            cfgv.OptionalRecurse("default", default_dict, {}),
+            cfgv.OptionalRecurse("builtin_roles", builtin_roles_dict, {}),
+            cfgv.OptionalRecurse("roles", Array(role_dict), []),
+            cfgv.NoAdditionalKeys(("apis", "misc", "default", "builtin_roles", "roles")),
+        )
 
-MISC_DICT = cfgv.Map(
-    None,
-    None,
-    cfgv.Optional("request_timeout", cfgv.check_int, 10),
-    cfgv.OptionalRecurse("session", SESSION_DICT, {}),
-    cfgv.NoAdditionalKeys(("request_timeout", "session")),
-)
-
-OPTIONS_DICT = cfgv.Map(
-    None,
-    None,
-    cfgv.Optional("api", cfgv.check_and(cfgv.check_string, check_api), "chatgpt"),
-    cfgv.Optional("model", cfgv.check_string, "gpt-4-1106-preview"),
-    cfgv.Optional("temperature", cfgv.check_and(check_float, check_temperature), 0.1),
-    cfgv.Optional("top_probability", cfgv.check_and(check_float, check_top_probability), 1.0),
-    cfgv.NoAdditionalKeys(("api", "model", "temperature", "top_probability")),
-)
-
-OPTIONS_NO_DEFAULT_DICT = Map(
-    None,
-    None,
-    *(
-        cfgv.OptionalNoDefault(item.key, item.check_fn)
-        for item in OPTIONS_DICT.items
-        if issubclass(type(item), cfgv.Optional)
-    ),
-    *(item for item in OPTIONS_DICT.items if not issubclass(type(item), cfgv.Optional)),
-)
-
-OUTPUT_DICT = cfgv.Map(
-    "output",
-    None,
-    cfgv.Optional("stream", cfgv.check_bool, True),
-    cfgv.Optional("formatted", cfgv.check_bool, True),
-    cfgv.Optional("color", cfgv.check_and(cfgv.check_string, check_color), "blue"),
-    cfgv.Optional("theme", cfgv.check_string, "dracula"),
-    cfgv.NoAdditionalKeys(("stream", "formatted", "color", "theme")),
-)
-
-OUTPUT_DICT_NO_DEFAULTS = Map(
-    None,
-    None,
-    *(
-        cfgv.OptionalNoDefault(item.key, item.check_fn)
-        for item in OUTPUT_DICT.items
-        if issubclass(type(item), cfgv.Optional)
-    ),
-    *(item for item in OUTPUT_DICT.items if not issubclass(type(item), cfgv.Optional)),
-)
-
-DEFAULT_DICT = cfgv.Map(
-    None,
-    None,
-    cfgv.OptionalNoDefault("role", cfgv.check_string),
-    cfgv.OptionalRecurse("options", OPTIONS_DICT, {}),
-    cfgv.OptionalRecurse("output", OUTPUT_DICT, {}),
-    cfgv.NoAdditionalKeys(("role", "options", "output")),
-)
-
-BUILTIN_ROLES_DICT = cfgv.Map(
-    "builtin_roles",
-    None,
-    cfgv.OptionalRecurse(
-        "code",
-        cfgv.Map(
+    @staticmethod
+    def _build_chat_gpt_dict() -> cfgv.Map:
+        return cfgv.Map(
             None,
             None,
-            cfgv.OptionalRecurse("options", OPTIONS_NO_DEFAULT_DICT, {}),
-            cfgv.NoAdditionalKeys(("options",)),
-        ),
-        {},
-    ),
-    cfgv.OptionalRecurse(
-        "shell",
-        cfgv.Map(
-            None,
-            None,
-            cfgv.OptionalRecurse("options", OPTIONS_NO_DEFAULT_DICT, {}),
-            cfgv.Optional("default_execute", cfgv.check_bool, False),
-            cfgv.NoAdditionalKeys(("options", "default_execute")),
-        ),
-        {},
-    ),
-    cfgv.OptionalRecurse(
-        "describe_shell",
-        cfgv.Map(
-            None,
-            None,
-            cfgv.OptionalRecurse("options", OPTIONS_NO_DEFAULT_DICT, {}),
-            cfgv.NoAdditionalKeys(("options",)),
-        ),
-        {},
-    ),
-)
+            cfgv.Optional("api_key", check_str_optional, ""),
+            cfgv.Optional("azure_endpoint", cfgv.check_and(check_str_optional, check_url), ""),
+            cfgv.Optional("azure_deployment", check_str_optional, ""),
+        )
 
-ROLE_DICT = cfgv.Map(
-    "role",
-    None,
-    cfgv.Required("name", cfgv.check_and(cfgv.check_string, check_role_name)),
-    cfgv.Required("description", cfgv.check_string),
-    cfgv.OptionalRecurse("options", OPTIONS_NO_DEFAULT_DICT, {}),
-    cfgv.OptionalRecurse("output", OUTPUT_DICT_NO_DEFAULTS, {}),
-    cfgv.NoAdditionalKeys(
-        (
-            "name",
-            "description",
-            "options",
-            "output",
-        ),
-    ),
-)
-
-CONFIG_SCHEMA = cfgv.Map(
-    "configuration",
-    None,
-    cfgv.OptionalRecurse(
-        "apis",
-        APIS_DICT,
-        {},
-    ),
-    cfgv.OptionalRecurse(
-        "misc",
-        MISC_DICT,
-        {},
-    ),
-    cfgv.OptionalRecurse(
-        "default",
-        DEFAULT_DICT,
-        {},
-    ),
-    cfgv.OptionalRecurse(
-        "builtin_roles",
-        BUILTIN_ROLES_DICT,
-        {},
-    ),
-    cfgv.OptionalRecurse(
-        "roles",
-        Array(ROLE_DICT),
-        [],
-    ),
-    cfgv.NoAdditionalKeys(
-        (
+    @staticmethod
+    def _build_apis_dict(chat_gpt_dict: cfgv.Map) -> cfgv.Map:
+        return cfgv.Map(
             "apis",
-            "misc",
-            "default",
+            None,
+            cfgv.OptionalRecurse("chatgpt", chat_gpt_dict, {}),
+        )
+
+    @staticmethod
+    def _build_session_dict() -> cfgv.Map:
+        return cfgv.Map(
+            None,
+            None,
+            cfgv.Optional("chat_history_path", check_path, (get_temp_dir() / C.PROJECT_NAME / "history").resolve()),
+            cfgv.Optional("chat_history_size", cfgv.check_and(cfgv.check_int, check_greater_than_zero), 100),
+            cfgv.Optional("chat_cache_path", check_path, (get_temp_dir() / C.PROJECT_NAME / "cache").resolve()),
+            cfgv.Optional("chat_cache_size", cfgv.check_and(cfgv.check_int, check_greater_than_zero), 100),
+            cfgv.Optional("cache", cfgv.check_bool, True),
+            cfgv.NoAdditionalKeys((
+                "chat_history_path",
+                "chat_history_size",
+                "chat_cache_path",
+                "chat_cache_size",
+                "cache",
+            )),
+        )
+
+    @staticmethod
+    def _build_misc_dict(session_dict: cfgv.Map) -> cfgv.Map:
+        return cfgv.Map(
+            None,
+            None,
+            cfgv.Optional("request_timeout", cfgv.check_int, 10),
+            cfgv.OptionalRecurse("session", session_dict, {}),
+            cfgv.NoAdditionalKeys(("request_timeout", "session")),
+        )
+
+    @staticmethod
+    def _build_options_dict() -> cfgv.Map:
+        return cfgv.Map(
+            None,
+            None,
+            cfgv.Optional("api", cfgv.check_and(cfgv.check_string, check_api), "chatgpt"),
+            cfgv.Optional("model", cfgv.check_string, "gpt-4-1106-preview"),
+            cfgv.Optional("temperature", cfgv.check_and(check_float, check_temperature), 0.1),
+            cfgv.Optional("top_probability", cfgv.check_and(check_float, check_top_probability), 1.0),
+            cfgv.NoAdditionalKeys(("api", "model", "temperature", "top_probability")),
+        )
+
+    @staticmethod
+    def _build_options_no_default_dict(options_dict: cfgv.Map) -> Map:
+        return Map(
+            None,
+            None,
+            *(
+                cfgv.OptionalNoDefault(item.key, item.check_fn)
+                for item in options_dict.items
+                if issubclass(type(item), cfgv.Optional)
+            ),
+            *(item for item in options_dict.items if not issubclass(type(item), cfgv.Optional)),
+        )
+
+    @staticmethod
+    def _build_output_dict() -> cfgv.Map:
+        return cfgv.Map(
+            "output",
+            None,
+            cfgv.Optional("stream", cfgv.check_bool, True),
+            cfgv.Optional("formatted", cfgv.check_bool, True),
+            cfgv.Optional("color", cfgv.check_and(cfgv.check_string, check_color), "blue"),
+            cfgv.Optional("theme", cfgv.check_string, "dracula"),
+            cfgv.NoAdditionalKeys(("stream", "formatted", "color", "theme")),
+        )
+
+    @staticmethod
+    def _build_output_dict_no_defaults(output_dict: cfgv.Map) -> Map:
+        return Map(
+            None,
+            None,
+            *(
+                cfgv.OptionalNoDefault(item.key, item.check_fn)
+                for item in output_dict.items
+                if issubclass(type(item), cfgv.Optional)
+            ),
+            *(item for item in output_dict.items if not issubclass(type(item), cfgv.Optional)),
+        )
+
+    @staticmethod
+    def _build_default_dict(options_dict: cfgv.Map, output_dict: cfgv.Map) -> cfgv.Map:
+        return cfgv.Map(
+            None,
+            None,
+            cfgv.OptionalNoDefault("role", cfgv.check_string),
+            cfgv.OptionalRecurse("options", options_dict, {}),
+            cfgv.OptionalRecurse("output", output_dict, {}),
+            cfgv.NoAdditionalKeys(("role", "options", "output")),
+        )
+
+    @staticmethod
+    def _build_builtin_roles_dict(options_no_default_dict: Map) -> cfgv.Map:
+        return cfgv.Map(
             "builtin_roles",
-            "roles",
-        ),
-    ),
-)
+            None,
+            cfgv.OptionalRecurse(
+                "code",
+                cfgv.Map(
+                    None,
+                    None,
+                    cfgv.OptionalRecurse("options", options_no_default_dict, {}),
+                    cfgv.NoAdditionalKeys(("options",)),
+                ),
+                {},
+            ),
+            cfgv.OptionalRecurse(
+                "shell",
+                cfgv.Map(
+                    None,
+                    None,
+                    cfgv.OptionalRecurse("options", options_no_default_dict, {}),
+                    cfgv.Optional("default_execute", cfgv.check_bool, False),
+                    cfgv.NoAdditionalKeys(("options", "default_execute")),
+                ),
+                {},
+            ),
+            cfgv.OptionalRecurse(
+                "describe_shell",
+                cfgv.Map(
+                    None,
+                    None,
+                    cfgv.OptionalRecurse("options", options_no_default_dict, {}),
+                    cfgv.NoAdditionalKeys(("options",)),
+                ),
+                {},
+            ),
+        )
+
+    @staticmethod
+    def _build_role_dict(options_no_default_dict: Map, output_dict_no_defaults: Map) -> cfgv.Map:
+        return cfgv.Map(
+            "role",
+            None,
+            cfgv.Required("name", cfgv.check_and(cfgv.check_string, check_role_name)),
+            cfgv.Required("description", cfgv.check_string),
+            cfgv.OptionalRecurse("options", options_no_default_dict, {}),
+            cfgv.OptionalRecurse("output", output_dict_no_defaults, {}),
+            cfgv.NoAdditionalKeys(("name", "description", "options", "output")),
+        )
