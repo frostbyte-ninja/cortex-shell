@@ -4,7 +4,7 @@ import pytest
 
 from cortex_shell import constants as C  # noqa: N812
 from cortex_shell.configuration.config import Config, _get_default_directory
-from cortex_shell.configuration.schema import CONFIG_SCHEMA
+from cortex_shell.configuration.schema import ConfigSchemaBuilder
 from cortex_shell.errors import InvalidConfigError
 from cortex_shell.role import CODE_ROLE, DEFAULT_ROLE, DESCRIBE_SHELL_ROLE, SHELL_ROLE
 from cortex_shell.util import get_temp_dir, os_name, shell_name
@@ -15,7 +15,7 @@ from cortex_shell.yaml import get_default_from_schema, yaml_dump
 def mock_default_config(tmp_dir_factory):
     config_dir = tmp_dir_factory.get()
     config_file = config_dir / C.CONFIG_FILE
-    yaml_dump(get_default_from_schema(CONFIG_SCHEMA), config_file.open("w"))
+    yaml_dump(get_default_from_schema(ConfigSchemaBuilder.build()), config_file.open("w"))
     return Config(directory=config_dir)
 
 
@@ -24,7 +24,7 @@ def modified_config_factory(tmp_dir_factory):
     def _modified_config_factory(changes):
         config_dir = tmp_dir_factory.get()
         config_file = config_dir / C.CONFIG_FILE
-        modified_config_data = get_default_from_schema(CONFIG_SCHEMA)
+        modified_config_data = get_default_from_schema(ConfigSchemaBuilder.build())
 
         # Apply changes to the config data
         for key_path, value in changes.items():
@@ -69,7 +69,7 @@ class TestDefaultConfig:
         assert mock_default_config.request_timeout() == 10
 
     def test_chat_history_path(self, mock_default_config):
-        assert mock_default_config.chat_history_path() == get_temp_dir() / C.PROJECT_NAME / "history"
+        assert mock_default_config.chat_history_path() == (get_temp_dir() / C.PROJECT_NAME / "history").resolve()
 
     def test_chat_history_size(self, mock_default_config):
         assert mock_default_config.chat_history_size() == 100

@@ -11,7 +11,7 @@ from .. import constants as C  # noqa: N812
 from ..errors import InvalidConfigError
 from ..role import CODE_ROLE, DEFAULT_ROLE, DESCRIBE_SHELL_ROLE, SHELL_ROLE, Options, Output, Role, ShellRole
 from ..yaml import get_default_from_schema, yaml_dump, yaml_load
-from .schema import CONFIG_SCHEMA
+from .schema import ConfigSchemaBuilder
 
 
 def _get_default_directory() -> Path:
@@ -23,7 +23,7 @@ def _get_default_directory() -> Path:
     if path_str := os.environ.get("CORTEX_SHELL_CONFIG_PATH"):
         path = Path(path_str)
     else:
-        path = Path(os.environ.get("XDG_CACHE_HOME") or (Path.home() / ".config").resolve()) / C.PROJECT_NAME
+        path = Path(os.environ.get("XDG_CACHE_HOME") or (Path.home() / ".config")) / C.PROJECT_NAME
     return path.resolve()
 
 
@@ -39,15 +39,16 @@ class Config:
     def _load_config(self) -> None:
         config_file = self.config_file()
 
+        config_schema = ConfigSchemaBuilder.build()
         if not config_file.exists():
             # new config file with default values
-            self._config = get_default_from_schema(CONFIG_SCHEMA)
+            self._config = get_default_from_schema(config_schema)
             yaml_dump(self._config, config_file.open("w"))
         else:
             # existing config file with added default values
             self._config = cfgv.load_from_filename(
                 filename=config_file,
-                schema=CONFIG_SCHEMA,
+                schema=config_schema,
                 load_strategy=functools.partial(yaml_load),
                 exc_tp=InvalidConfigError,
             )
