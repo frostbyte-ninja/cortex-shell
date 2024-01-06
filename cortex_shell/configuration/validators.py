@@ -7,6 +7,11 @@ from urllib.parse import urlsplit
 import cfgv
 
 
+def check_greater_than_zero(value: int) -> None:
+    if value <= 0:
+        raise cfgv.ValidationError(f"{value} is not greater than 0")
+
+
 def check_type_optional(tp: type, typename: str | None = None) -> Callable[[Any], None]:
     # TODO(fn): remove this function when python 3.9 gets deprecated
     # check_str = cfgv.check_type(Optional[str]) will work fine then
