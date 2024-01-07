@@ -5,7 +5,7 @@ import cfgv
 from .. import constants as C  # noqa: N812
 from ..types.cfgv import Array, Map
 from ..util import get_temp_dir
-from .validators import (
+from .validator import (
     check_api,
     check_color,
     check_float,
@@ -15,7 +15,7 @@ from .validators import (
     check_str_optional,
     check_temperature,
     check_top_probability,
-    check_url,
+    check_url_optional,
 )
 
 
@@ -51,7 +51,7 @@ class ConfigSchemaBuilder:
             None,
             None,
             cfgv.Optional("api_key", check_str_optional, ""),
-            cfgv.Optional("azure_endpoint", cfgv.check_and(check_str_optional, check_url), ""),
+            cfgv.Optional("azure_endpoint", cfgv.check_and(check_str_optional, check_url_optional), ""),
             cfgv.Optional("azure_deployment", check_str_optional, ""),
         )
 
