@@ -39,6 +39,7 @@ pyyaml = "^6.0.1"
 rich = "^13.1.0"
 typer = "^0.9"
 validators = "^0.22"
+identify = "^2.5"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.1"

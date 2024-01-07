@@ -3,7 +3,8 @@ from typing import Annotated, Optional, cast
 
 import click
 import typer
-from click import UsageError
+from click import FileError, UsageError
+from identify import identify
 
 from .cache import Cache
 from .client.chatgpt_client import ChatGptClient
@@ -302,6 +303,10 @@ class Application:
             self._prompt = click.edit(self._prompt) or ""
 
     def _validate(self) -> None:
+        for file in self._files:
+            if "text" not in identify.tags_from_path(str(file.resolve())):
+                raise FileError(str(file), hint="Only plain text files are supported")
+
         if sum((bool(self._role_name), self._code, self._describe_shell, self._shell)) > 1:
             raise UsageError("Only one of --role, --code, --describe-shell, --shell options can be used at a time.")
 
