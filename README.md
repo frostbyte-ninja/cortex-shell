@@ -12,6 +12,12 @@ To install CortexShell, execute the following command:
 pip install cortex-shell
 ```
 
+Alternatively, you can install CortexShell using `pipx`, which allows you to manage and isolate Python packages in separate environments. By using `pipx`, you can ensure that CortexShell and its dependencies are isolated from your system's Python environment, preventing potential conflicts and making it easier to manage and update. To install CortexShell with `pipx`, run the following command:
+
+```shell
+pipx install cortex-shell
+```
+
 You will need an OpenAI API key, which you can generate [here](https://platform.openai.com/account/api-keys).
 
 Upon the first run, a default config file will be created. You need to fill in your credentials in the `~/.config/cortex-shell/config.yaml` file.
