@@ -2,7 +2,7 @@
 name = "cortex-shell"
 version = "0.0.0"
 description = "A command-line productivity tool powered by AI models, will help you accomplish your tasks faster and more efficiently."
-keywords = ["shell", "gpt", "openai", "cli", "productivity"]
+keywords = ["bash", "chatgpt", "cli", "gpt", "openai", "productivity", "python", "shell", "terminal"]
 authors = ["frostbyte-ninja"]
 readme = "README.md"
 license = "MIT"
@@ -31,26 +31,26 @@ python = "^3.9"
 cfgv = "^3.3"
 click = "^8.1.3"
 distro = "^1.9.0"
+identify = "^2.5"
 openai = "^1.6.1"
 pathvalidate = "^3.2"
-prompt_toolkit = "^3.0.43"
+prompt-toolkit = "^3.0.43"
 psutil = "^5.9.1"
 pyyaml = "^6.0.1"
 rich = "^13.1.0"
 typer = "^0.9"
 validators = "^0.22"
-identify = "^2.5"
 
 [tool.poetry.group.test.dependencies]
+coverage = "^7.4"
 pytest = "^7.1"
 pytest-mock = "^3.12"
 pytest-timeout = "^2.2"
-coverage = "^7.4"
 re-assert = "^1.1"
 
 [tool.poetry.group.dev.dependencies]
-pre-commit = "^3.6"
 gitlint = "^0.19.1"
+pre-commit = "^3.6"
 
 [tool.poetry.scripts]
 cortex-shell = "cortex_shell.application:run"
@@ -108,41 +108,41 @@ select = [
 ]
 
 ignore = [
-  "TD003",   # missing-todo-link
   "E501",    # line too long
   "PLC0414", # useless-import-alias
-  "RUF012",  # mutable-class-default
-  "SIM112",  # uncapitalized-environment-variables
-  "TID252",  # relative-imports
-  "TRY003",  # raise-vanilla-args
   "RET505",  # superfluous-else-return
   "RET508",  # superfluous-else-break
+  "RUF012",  # mutable-class-default
+  "SIM112",  # uncapitalized-environment-variables
+  "TD003",   # missing-todo-link
+  "TID252",  # relative-imports
+  "TRY003",  # raise-vanilla-args
 
   # disabled because of formatting
-  "W191",   # tab-indentation
+  "COM812", # missing-trailing-comma
+  "COM819", # prohibited-trailing-comma
+  "D206",   # indent-with-spaces
+  "D300",   # triple-single-quotes
   "E111",   # indentation-with-invalid-multiple
   "E114",   # indentation-with-invalid-multiple-comment
   "E117",   # over-indented
-  "D206",   # indent-with-spaces
-  "D300",   # triple-single-quotes
+  "ISC001", # single-line-implicit-string-concatenation
+  "ISC002", # multi-line-implicit-string-concatenation
   "Q000",   # bad-quotes-inline-string
   "Q001",   # bad-quotes-multiline-string
   "Q002",   # bad-quotes-docstring
   "Q003",   # avoidable-escaped-quote
-  "COM812", # missing-trailing-comma
-  "COM819", # prohibited-trailing-comma
-  "ISC001", # single-line-implicit-string-concatenation
-  "ISC002", # multi-line-implicit-string-concatenation
+  "W191",   # tab-indentation
 ]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = [
-  "SLF001",  # private-member-access
-  "PLR2004", # magic-value-comparison
   "PLR0904", # too-many-public-methods
-  "PLR6301", # no-self-use
   "PLR0913", # too-many-arguments
   "PLR0917", # too-many-positional
+  "PLR2004", # magic-value-comparison
+  "PLR6301", # no-self-use
+  "SLF001",  # private-member-access
 ]
 
 [tool.ruff.lint.pylint]
@@ -162,7 +162,7 @@ ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
 module = ["tests.*", "testing.*"]
-disable_error_code = ["no-untyped-call", "no-untyped-def", "attr-defined", "no-any-return"]
+disable_error_code = ["attr-defined", "no-any-return", "no-untyped-call", "no-untyped-def"]
 
 [tool.coverage.run]
 omit = ["__main__.py", "__init__.py"]
