@@ -1,10 +1,13 @@
 from __future__ import annotations
 
-from pathlib import Path
-from typing import Any, Callable
-from urllib.parse import urlsplit
+from typing import TYPE_CHECKING, Any, Callable
 
 import cfgv
+import validators
+from pathvalidate import validate_filepath
+
+if TYPE_CHECKING:  # pragma: no cover
+    from pathlib import Path
 
 
 def check_greater_than_zero(value: int) -> None:
@@ -27,9 +30,9 @@ def check_type_optional(tp: type, typename: str | None = None) -> Callable[[Any]
 
 def check_path(path: str | Path) -> None:
     try:
-        Path(path)
-    except Exception as err:
-        raise cfgv.ValidationError(f"{path!r} is not a valid path") from err
+        validate_filepath(path, platform="auto")
+    except Exception as e:
+        raise cfgv.ValidationError(f"{path!r} is not a valid path") from e
 
 
 def check_api(api: str) -> None:
@@ -57,10 +60,8 @@ def check_color(color: str) -> None:
         raise cfgv.ValidationError(f'"{color}" is not a supported color. Valid options are: {options}')
 
 
-def check_url(url: str) -> None:
-    try:
-        urlsplit(url)
-    except ValueError:
+def check_url_optional(url: str | None) -> None:
+    if url is not None and not validators.url(url):
         raise cfgv.ValidationError(f'"{url}" is not a valid url') from None
 
 
