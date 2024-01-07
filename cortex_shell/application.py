@@ -354,10 +354,10 @@ class Application:
                 stream=self._role.output.stream,
                 caching=cache,
             )
-        except AuthenticationError as ex:
-            raise UsageError(f"Authentication Error: {ex}, check {cfg().config_file()}") from ex
-        except ValueError as ex:
-            raise UsageError(str(ex)) from ex
+        except AuthenticationError as e:
+            raise UsageError(f"Authentication Error: {e}, check {cfg().config_file()}") from e
+        except ValueError as e:
+            raise UsageError(str(e)) from e
 
     def _get_history(self) -> IHistory:
         if self._chat_id:
