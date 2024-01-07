@@ -58,8 +58,8 @@ class ChatGptClient(BaseClient):
                 top_p=top_probability,
                 stream=stream,
             )
-        except AuthenticationError as ex:
-            raise errors.AuthenticationError("OpenAI authentication error") from ex
+        except AuthenticationError as e:
+            raise errors.AuthenticationError("OpenAI authentication error") from e
 
         if stream:
             for chunk in response:
