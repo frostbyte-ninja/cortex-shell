@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, cast
 
-from openai import AuthenticationError, AzureOpenAI, OpenAI
-from openai.types.chat import ChatCompletionMessageParam
+import httpx
+from openai import APITimeoutError, AuthenticationError, AzureOpenAI, OpenAI, Stream
+from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 
 from .. import errors
 from .base_client import BaseClient
@@ -37,20 +38,11 @@ class ChatGptClient(BaseClient):
         stream: bool,
     ) -> Generator[str, None, None]:
         if not self._api_key:
-            raise errors.AuthenticationError("Invalid OpenAI API key")
+            raise errors.AuthenticationError("No OpenAI API key")
+
+        client = self._get_client()
 
         try:
-            if self._azure_endpoint:
-                client = AzureOpenAI(
-                    api_key=self._api_key,
-                    timeout=self._timeout,
-                    api_version="2023-09-01-preview",
-                    azure_endpoint=self._azure_endpoint,
-                    azure_deployment=self._azure_deployment,
-                )
-            else:
-                client = OpenAI(api_key=self._api_key, timeout=self._timeout)
-
             response = client.chat.completions.create(
                 messages=cast(list[ChatCompletionMessageParam], messages),
                 model=model,
@@ -60,9 +52,30 @@ class ChatGptClient(BaseClient):
             )
         except AuthenticationError as e:
             raise errors.AuthenticationError("OpenAI authentication error") from e
+        except APITimeoutError as e:
+            raise errors.RequestTimeoutError from e
 
-        if stream:
-            for chunk in response:
-                yield chunk.choices[0].delta.content or ""
+        yield from self._process_response(response, stream)
+
+    def _get_client(self) -> AzureOpenAI | OpenAI:
+        if self._azure_endpoint:
+            return AzureOpenAI(
+                api_key=self._api_key,
+                timeout=self._timeout,
+                api_version="2023-09-01-preview",
+                azure_endpoint=self._azure_endpoint,
+                azure_deployment=self._azure_deployment,
+            )
         else:
-            yield response.choices[0].message.content
+            return OpenAI(api_key=self._api_key, timeout=self._timeout)
+
+    @staticmethod
+    def _process_response(response: Stream | ChatCompletion, stream: bool) -> Generator[str, None, None]:
+        try:
+            if stream:
+                for chunk in response:
+                    yield chunk.choices[0].delta.content or "" if chunk.choices else ""
+            else:
+                yield response.choices[0].message.content or "" if response.choices else ""
+        except httpx.ReadTimeout as e:
+            raise errors.RequestTimeoutError from e
