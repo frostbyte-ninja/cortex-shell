@@ -2,13 +2,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from cortex_shell.yaml import yaml_dump, yaml_load
+from ..yaml import yaml_dump, yaml_load
 
 if TYPE_CHECKING:  # pragma: no cover
     from pathlib import Path
 
-    from cortex_shell.role import Role
-    from cortex_shell.types import Message
+    from ..role import Role
+    from ..types import Message
 
 
 class ChatSession:
