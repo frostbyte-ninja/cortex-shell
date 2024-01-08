@@ -17,6 +17,7 @@ from typing import Any, Callable
 import distro
 import psutil
 import typer
+from prompt_toolkit import print_formatted_text as print_formatted_text_orig
 from prompt_toolkit.formatted_text import FormattedText
 
 from . import constants as C  # noqa: N812
@@ -155,6 +156,25 @@ def is_tty() -> bool:
 
 def get_temp_dir() -> Path:
     return Path(gettempdir())
+
+
+def print_formatted_text(*values: str | FormattedText, **kwargs: Any) -> None:
+    # workaround for NoConsoleScreenBufferError
+    if is_tty():
+        print_formatted_text_orig(*values, **kwargs)
+    else:
+
+        def to_text(val: Any) -> str:
+            if isinstance(val, str):
+                return val
+            elif isinstance(val, list):
+                return "".join([v[1] for v in val])
+            else:
+                raise TypeError
+
+        end = kwargs.get("end", "\n")
+        sep = kwargs.get("sep", " ")
+        print(sep.join([to_text(value) for value in values]), end=end)
 
 
 def rmtree(path: Path) -> None:

@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING
 import pytest
 
 if TYPE_CHECKING:  # pragma: no cover
-    import collections
+    from collections.abc import MutableMapping
 
 
 ignore_if_windows = pytest.mark.skipif(sys.platform == "win32", reason="windows")
@@ -47,8 +47,8 @@ def get_path_to_shell(shell_name: str) -> Path | None:
 
 def prepend_dir_to_path(
     path: Path,
-    env: collections.abc.MutableMapping[str, str] | None = None,
-) -> collections.abc.MutableMapping[str, str]:
+    env: MutableMapping[str, str] | None = None,
+) -> MutableMapping[str, str]:
     if env is None:
         env = os.environ.copy()
     env["PATH"] = str(path) + os.pathsep + env["PATH"]

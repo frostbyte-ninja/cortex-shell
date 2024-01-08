@@ -2,9 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from prompt_toolkit import print_formatted_text
-
-from ..util import get_colored_text
+from ..util import get_colored_text, print_formatted_text
 from .irenderer import IRenderer
 
 if TYPE_CHECKING:  # pragma: no cover
