@@ -8,3 +8,7 @@ class InvalidConfigError(FatalError):
 
 class AuthenticationError(FatalError):
     pass
+
+
+class RequestTimeoutError(FatalError):
+    pass

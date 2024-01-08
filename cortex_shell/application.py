@@ -3,7 +3,7 @@ from typing import Annotated, Optional, cast
 
 import click
 import typer
-from click import FileError, UsageError
+from click import ClickException, FileError, UsageError
 from identify import identify
 
 from .cache import Cache
@@ -11,7 +11,7 @@ from .client.chatgpt_client import ChatGptClient
 from .client.iclient import IClient
 from .configuration import cfg
 from .error_handler import ErrorHandler
-from .errors import AuthenticationError
+from .errors import AuthenticationError, RequestTimeoutError
 from .handlers.default_handler import DefaultHandler
 from .handlers.ihandler import IHandler
 from .handlers.repl_handler import ReplHandler
@@ -361,6 +361,8 @@ class Application:
             )
         except AuthenticationError as e:
             raise UsageError(f"Authentication Error: {e}, check {cfg().config_file()}") from e
+        except RequestTimeoutError as e:
+            raise ClickException("Request timed out") from e
         except ValueError as e:
             raise UsageError(str(e)) from e
 
