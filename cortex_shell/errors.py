@@ -12,3 +12,7 @@ class AuthenticationError(FatalError):
 
 class RequestTimeoutError(FatalError):
     pass
+
+
+class DeploymentNotFoundError(FatalError):
+    pass
