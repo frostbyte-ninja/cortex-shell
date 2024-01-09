@@ -11,7 +11,7 @@ from .client.chatgpt_client import ChatGptClient
 from .client.iclient import IClient
 from .configuration import cfg
 from .error_handler import ErrorHandler
-from .errors import AuthenticationError, RequestTimeoutError
+from .errors import AuthenticationError, DeploymentNotFoundError, RequestTimeoutError
 from .handlers.default_handler import DefaultHandler
 from .handlers.ihandler import IHandler
 from .handlers.repl_handler import ReplHandler
@@ -360,7 +360,9 @@ class Application:
                 caching=cache,
             )
         except AuthenticationError as e:
-            raise UsageError(f"Authentication Error: {e}, check {cfg().config_file()}") from e
+            raise UsageError(f'Authentication Error: "{e}", check API key in {cfg().config_file()}') from e
+        except DeploymentNotFoundError as e:
+            raise UsageError(str(e)) from e
         except RequestTimeoutError as e:
             raise ClickException("Request timed out") from e
         except ValueError as e:

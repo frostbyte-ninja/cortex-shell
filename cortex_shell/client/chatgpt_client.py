@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, cast
 
 import httpx
-from openai import APITimeoutError, AuthenticationError, AzureOpenAI, OpenAI, Stream
+from openai import APITimeoutError, AuthenticationError, AzureOpenAI, NotFoundError, OpenAI, Stream
 from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 
 from .. import errors
@@ -52,6 +52,10 @@ class ChatGptClient(BaseClient):
             )
         except AuthenticationError as e:
             raise errors.AuthenticationError("OpenAI authentication error") from e
+        except NotFoundError as e:
+            raise errors.DeploymentNotFoundError(
+                f'Chat completion deployment "{self._azure_deployment}" not found on endpoint {self._azure_endpoint}',
+            ) from e
         except APITimeoutError as e:
             raise errors.RequestTimeoutError from e
 
