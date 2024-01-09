@@ -6,12 +6,12 @@ import typer
 from click import ClickException, FileError, UsageError
 from identify import identify
 
+from . import errors
 from .cache import Cache
 from .client.chatgpt_client import ChatGptClient
 from .client.iclient import IClient
 from .configuration import cfg
 from .error_handler import ErrorHandler
-from .errors import AuthenticationError, DeploymentNotFoundError, RequestTimeoutError
 from .handlers.default_handler import DefaultHandler
 from .handlers.ihandler import IHandler
 from .handlers.repl_handler import ReplHandler
@@ -359,12 +359,14 @@ class Application:
                 stream=self._role.output.stream,
                 caching=cache,
             )
-        except AuthenticationError as e:
+        except errors.AuthenticationError as e:
             raise UsageError(f'Authentication Error: "{e}", check API key in {cfg().config_file()}') from e
-        except DeploymentNotFoundError as e:
+        except errors.DeploymentNotFoundError as e:
             raise UsageError(str(e)) from e
-        except RequestTimeoutError as e:
-            raise ClickException("Request timed out") from e
+        except errors.RequestTimeoutError as e:
+            raise ClickException("API request timed out") from e
+        except errors.ConnectError as e:
+            raise ClickException("API connection error") from e
         except ValueError as e:
             raise UsageError(str(e)) from e
 
