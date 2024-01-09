@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, cast
 
 import httpx
-from openai import APITimeoutError, AuthenticationError, AzureOpenAI, NotFoundError, OpenAI, Stream
+from openai import APIConnectionError, APITimeoutError, AuthenticationError, AzureOpenAI, NotFoundError, OpenAI, Stream
 from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 
 from .. import errors
@@ -58,6 +58,8 @@ class ChatGptClient(BaseClient):
             ) from e
         except APITimeoutError as e:
             raise errors.RequestTimeoutError from e
+        except APIConnectionError as e:
+            raise errors.ConnectError from e
 
         yield from self._process_response(response, stream)
 

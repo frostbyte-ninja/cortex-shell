@@ -16,3 +16,7 @@ class RequestTimeoutError(FatalError):
 
 class DeploymentNotFoundError(FatalError):
     pass
+
+
+class ConnectError(FatalError):
+    pass
