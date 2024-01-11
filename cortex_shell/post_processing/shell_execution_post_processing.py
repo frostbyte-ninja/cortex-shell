@@ -13,7 +13,7 @@ from ..processing.default_processing import DefaultProcessing
 from ..renderer.formatted_renderer import FormattedRenderer
 from ..renderer.plain_renderer import PlainRenderer
 from ..types.prompt_toolkit import RadioListHorizontal
-from ..util import get_colored_text, has_stdin, run_command
+from ..util import get_colored_text, has_stdin, is_tty, run_command
 from .ipost_processing import IPostProcessing
 
 # mypy: disable-error-code="union-attr"
@@ -39,7 +39,8 @@ class ShellExecutionPostProcessing(IPostProcessing):
         self._handler = self._get_shell_describe_handler(client)
 
     def __call__(self, messages: list[Message]) -> None:
-        if has_stdin():
+        if has_stdin() or not is_tty():
+            # do nothing if we are reading from a pipe or redirecting output
             return
 
         current_assistant_message = messages[-1]["content"]

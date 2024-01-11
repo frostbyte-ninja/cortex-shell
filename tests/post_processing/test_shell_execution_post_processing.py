@@ -27,6 +27,26 @@ def mock_prompt(mocker, shell_execution_post_processing):
 
 
 class TestShellExecutionPostProcessing:
+    def test_shell_execution_post_processing_guard_conditions_no_parameters(
+        self,
+        shell_execution_post_processing,
+        mock_prompt,
+        messages,
+        mocker,
+    ):
+        has_stdin_mock = mocker.patch(f"{C.PROJECT_MODULE}.post_processing.shell_execution_post_processing.has_stdin")
+        is_tty_mock = mocker.patch(f"{C.PROJECT_MODULE}.post_processing.shell_execution_post_processing.is_tty")
+
+        messages = [Message(role="test_user", content="Message")]
+
+        for stdin_value, tty_value in [(True, True), (True, False), (False, False)]:
+            has_stdin_mock.return_value = stdin_value
+            is_tty_mock.return_value = tty_value
+
+            shell_execution_post_processing(messages)
+
+            mock_prompt.assert_not_called()
+
     @pytest.mark.usefixtures("_stdin")
     def test_shell_execution_post_processing_abort(
         self,
@@ -39,7 +59,14 @@ class TestShellExecutionPostProcessing:
         run_command_mock = mocker.patch(
             f"{C.PROJECT_MODULE}.post_processing.shell_execution_post_processing.run_command",
         )
-
+        mocker.patch(
+            f"{C.PROJECT_MODULE}.post_processing.shell_execution_post_processing.has_stdin",
+            return_value=False,
+        )
+        mocker.patch(
+            f"{C.PROJECT_MODULE}.post_processing.shell_execution_post_processing.is_tty",
+            return_value=True,
+        )
         shell_execution_post_processing(messages)
 
         run_command_mock.assert_not_called()
@@ -55,6 +82,14 @@ class TestShellExecutionPostProcessing:
         mock_prompt.return_value = Option.EXECUTE
         run_command_mock = mocker.patch(
             f"{C.PROJECT_MODULE}.post_processing.shell_execution_post_processing.run_command",
+        )
+        mocker.patch(
+            f"{C.PROJECT_MODULE}.post_processing.shell_execution_post_processing.has_stdin",
+            return_value=False,
+        )
+        mocker.patch(
+            f"{C.PROJECT_MODULE}.post_processing.shell_execution_post_processing.is_tty",
+            return_value=True,
         )
 
         shell_execution_post_processing(messages)
@@ -73,6 +108,14 @@ class TestShellExecutionPostProcessing:
         mock_prompt.side_effect = [Option.DESCRIBE, Option.ABORT]
         handle_mock = mocker.patch(
             f"{C.PROJECT_MODULE}.post_processing.shell_execution_post_processing.DefaultHandler.handle",
+        )
+        mocker.patch(
+            f"{C.PROJECT_MODULE}.post_processing.shell_execution_post_processing.has_stdin",
+            return_value=False,
+        )
+        mocker.patch(
+            f"{C.PROJECT_MODULE}.post_processing.shell_execution_post_processing.is_tty",
+            return_value=True,
         )
 
         shell_execution_post_processing(messages)
