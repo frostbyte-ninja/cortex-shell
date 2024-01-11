@@ -27,7 +27,7 @@ def mock_prompt(mocker, shell_execution_post_processing):
 
 
 class TestShellExecutionPostProcessing:
-    def test_shell_execution_post_processing_guard_conditions_no_parameters(
+    def test_shell_execution_post_processing_no_tty(
         self,
         shell_execution_post_processing,
         mock_prompt,
