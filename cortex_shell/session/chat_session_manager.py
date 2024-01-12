@@ -17,6 +17,7 @@ class ChatSessionManager:
     def __init__(self, storage_path: Path, history_size: int | None = None):
         self._storage_path = storage_path
         self._history_size = history_size
+        self._storage_path.mkdir(parents=True, exist_ok=True)
 
     def get_session(self, chat_id: str) -> ChatSession:
         return ChatSession((self._storage_path / chat_id).with_suffix(".yaml"), self._history_size)

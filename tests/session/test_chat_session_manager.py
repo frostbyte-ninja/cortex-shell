@@ -10,7 +10,11 @@ from cortex_shell.types import Message
 
 @pytest.fixture()
 def chat_session_manager(tmp_dir_factory):
-    return ChatSessionManager(storage_path=tmp_dir_factory.get(), history_size=10)
+    temp_dir = tmp_dir_factory.get() / "some_dir"
+    assert not temp_dir.exists()
+    manager = ChatSessionManager(storage_path=temp_dir, history_size=10)
+    assert temp_dir.exists()
+    return manager
 
 
 class TestChatSession:
