@@ -17,16 +17,22 @@ class FormattedRenderer(IRenderer):
     def __init__(self, role: Role) -> None:
         super().__init__()
         self._role = role
+        self._live: Live | None = None
 
-    def __enter__(self) -> None:
+    def __enter__(self) -> IRenderer:
         # A new Live object must be created so that we can start with a fresh cursor offset
         self._live = Live(vertical_overflow="visible", auto_refresh=False)
         self._live.__enter__()  # noqa: PLC2801
+        return self
 
     def __exit__(self, *args: object) -> None:
         self._live.__exit__(*args)
+        self._live = None
 
     def __call__(self, text: str, chunk: str) -> None:
+        if self._live is None:
+            raise RuntimeError("Renderer must be used as a context manager")
+
         text += chunk
 
         self._live.update(

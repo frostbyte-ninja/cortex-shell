@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 
 class IRenderer(ABC):  # pragma: no cover
     @abstractmethod
-    def __enter__(self) -> None:
+    def __enter__(self) -> IRenderer:
         raise NotImplementedError
 
     @abstractmethod

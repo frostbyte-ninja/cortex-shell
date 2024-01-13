@@ -28,8 +28,16 @@ class TestFormattedRenderer:
         live_mock = mocker.patch(f"{C.PROJECT_MODULE}.renderer.formatted_renderer.Live")
         markdown_mock = mocker.patch(f"{C.PROJECT_MODULE}.renderer.formatted_renderer.Markdown")
 
-        with formatted_renderer:
-            formatted_renderer("text1", "text2")
+        with formatted_renderer as renderer:
+            renderer("text1", "text2")
 
         live_mock.return_value.update.assert_called_once()
         markdown_mock.assert_called_with("text1text2", code_theme=mocker.ANY, style=mocker.ANY)
+
+    def test_call_no_context(self, mocker, formatted_renderer):
+        mock = mocker.patch(f"{C.PROJECT_MODULE}.renderer.formatted_renderer.Live")
+
+        with pytest.raises(RuntimeError):
+            formatted_renderer("text1", "text2")
+
+        mock.return_value.update.assert_not_called()
