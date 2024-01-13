@@ -13,8 +13,8 @@ class PlainRenderer(IRenderer):
     def __init__(self, role: Role):
         self._role = role
 
-    def __enter__(self) -> None:
-        pass
+    def __enter__(self) -> IRenderer:
+        return self
 
     def __exit__(self, *args: object) -> None:
         # new line

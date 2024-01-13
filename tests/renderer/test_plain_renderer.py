@@ -28,8 +28,8 @@ class TestPlainRenderer:
         print_formatted_text_mock = mocker.patch(f"{C.PROJECT_MODULE}.renderer.plain_renderer.print_formatted_text")
         colored_text_mock = mocker.patch(f"{C.PROJECT_MODULE}.renderer.plain_renderer.get_colored_text")
 
-        with plain_renderer:
-            plain_renderer("text1", "text2")
+        with plain_renderer as renderer:
+            renderer("text1", "text2")
 
         print_formatted_text_mock.assert_any_call(mocker.ANY, end="")
         colored_text_mock.assert_called_with("text2", mocker.ANY)
