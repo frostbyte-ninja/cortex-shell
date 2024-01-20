@@ -14,9 +14,11 @@ from pathlib import Path
 from tempfile import gettempdir
 from typing import Any, Callable
 
+import click.exceptions
 import distro
 import psutil
 import typer
+from pathvalidate import is_valid_filepath
 from prompt_toolkit import print_formatted_text as print_formatted_text_orig
 from prompt_toolkit.formatted_text import FormattedText
 
@@ -46,6 +48,17 @@ def print_version_callback(*_args: Any) -> None:
     typer.echo(f"v{C.VERSION}")
 
 
+def get_powershell_profile_path() -> Path | None:
+    command = 'powershell -NoProfile -Command "$PROFILE"'
+    result = subprocess.run(command, capture_output=True, text=True, check=False)
+    path = result.stdout.strip()
+
+    if result.returncode != 0 or not is_valid_filepath(path, platform="auto"):
+        return None
+
+    return Path(path)
+
+
 @option_callback
 def install_shell_integration(*_args: Any) -> None:
     """
@@ -55,6 +68,8 @@ def install_shell_integration(*_args: Any) -> None:
     """
 
     shell = shell_name()
+    shell_config_path: Path | None
+
     if shell == "bash":
         shell_config_path = Path.home() / ".bashrc"
     elif shell == "zsh":
@@ -63,10 +78,13 @@ def install_shell_integration(*_args: Any) -> None:
         shell_config_path = Path.home() / ".config" / "fish" / "config.fish"
         shell_config_path.parent.mkdir(parents=True, exist_ok=True)
     elif shell == "powershell":
-        shell_config_path = Path.home() / "Documents" / "WindowsPowerShell" / "Microsoft.PowerShell_profile.ps1"
+        shell_config_path = get_powershell_profile_path()
     else:
-        typer.echo(f'Your shell "{shell}" is not supported.')
+        typer.echo(f'"{shell}" is not supported.')
         return
+
+    if not shell_config_path:
+        raise click.ClickException(f'Could not determine "{shell}" config file')
 
     marker = "# cortex-shell integration"
     with get_resource_file(shell, "shell_integrations").open("r", encoding="utf-8") as source:
@@ -88,7 +106,7 @@ def install_shell_integration(*_args: Any) -> None:
     with shell_config_path.open("w", encoding="utf-8", newline="\n") as target:
         target.write(updated_content)
 
-    typer.echo(f'Integration for "{shell}" shell successfully installed. Restart your terminal to apply changes.')
+    typer.echo(f'Integration for "{shell}" successfully installed. Restart your terminal to apply changes.')
 
 
 def get_colored_text(text: str, color: str) -> FormattedText:

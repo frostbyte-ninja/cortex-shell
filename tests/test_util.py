@@ -32,6 +32,8 @@ class TestShellIntegration:
     def test_shell_integration_installation(self, mocker, tmp_dir_factory, mock_shell_integration, shell, config_file):
         tmp_home = tmp_dir_factory.get()
         mocker.patch("pathlib.Path.home", return_value=tmp_home)
+        mocker.patch(f"{C.PROJECT_MODULE}.util.get_powershell_profile_path", return_value=tmp_home / config_file)
+
         shell_config_path = tmp_home / config_file
 
         assert not shell_config_path.is_file()
@@ -62,6 +64,8 @@ class TestShellIntegration:
     def test_shell_integration_update(self, mocker, tmp_dir_factory, mock_shell_integration, shell, config_file):
         tmp_home = tmp_dir_factory.get()
         mocker.patch("pathlib.Path.home", return_value=tmp_home)
+        mocker.patch(f"{C.PROJECT_MODULE}.util.get_powershell_profile_path", return_value=tmp_home / config_file)
+
         shell_config_path = tmp_home / config_file
 
         mock_shell_integration(shell)
@@ -91,7 +95,7 @@ class TestShellIntegration:
 
         mock_shell_integration("unsupported_shell")
 
-        mock.assert_called_once_with('Your shell "unsupported_shell" is not supported.')
+        mock.assert_called_once_with('"unsupported_shell" is not supported.')
 
     @ignore_if_windows
     def test_bash(self, mock_shell_integration, mock_executable):
