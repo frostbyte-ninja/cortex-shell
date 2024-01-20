@@ -22,7 +22,7 @@ class FormattedRenderer(IRenderer):
     def __enter__(self) -> IRenderer:
         # A new Live object must be created so that we can start with a fresh cursor offset
         self._live = Live(vertical_overflow="visible", auto_refresh=False)
-        self._live.__enter__()  # noqa: PLC2801
+        self._live.__enter__()
         return self
 
     def __exit__(self, *args: object) -> None:
