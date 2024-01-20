@@ -22,7 +22,12 @@ class MockProcess:
 class TestShellIntegration:
     @pytest.mark.parametrize(
         ("shell", "config_file"),
-        [("bash", ".bashrc"), ("zsh", ".zshrc"), ("fish", ".config/fish/config.fish")],
+        [
+            ("bash", ".bashrc"),
+            ("zsh", ".zshrc"),
+            ("fish", ".config/fish/config.fish"),
+            ("powershell", "Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1"),
+        ],
     )
     def test_shell_integration_installation(self, mocker, tmp_dir_factory, mock_shell_integration, shell, config_file):
         tmp_home = tmp_dir_factory.get()
@@ -47,7 +52,12 @@ class TestShellIntegration:
 
     @pytest.mark.parametrize(
         ("shell", "config_file"),
-        [("bash", ".bashrc"), ("zsh", ".zshrc"), ("fish", ".config/fish/config.fish")],
+        [
+            ("bash", ".bashrc"),
+            ("zsh", ".zshrc"),
+            ("fish", ".config/fish/config.fish"),
+            ("powershell", "Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1"),
+        ],
     )
     def test_shell_integration_update(self, mocker, tmp_dir_factory, mock_shell_integration, shell, config_file):
         tmp_home = tmp_dir_factory.get()

@@ -234,7 +234,7 @@ ls -lhS
 
 ## Shell Integration
 
-Shell integration allows you to use CortexShell in your terminal with hotkeys. It is currently available for fish, bash, and zsh. It will allow you to have completions in your shell history, and also edit suggested commands right away.
+Shell integration allows you to use CortexShell in your terminal with hotkeys. It is currently available for fish, bash, zsh and powershell. It will allow you to have completions for your shell prompt, and also edit suggested commands right away.
 
 To install shell integration, run:
 
@@ -243,7 +243,7 @@ cortex-shell --install-integration
 # Integration for "fish" shell successfully installed. Restart your terminal to apply changes.
 ```
 
-This will add a few lines to your `~/.config/fish/config.fish`, `.bashrc`, or `.zshrc` file. After that, you can use `ctrl+l` to invoke CortexShell. When you do that, it will replace your current input line buffer with the suggested command. You can then edit it and press `Enter` to execute.
+This will add a few lines to your `~/.config/fish/config.fish`, `.bashrc`, `.zshrc`, or `Microsoft.PowerShell_profile` file. After that, you can use `ctrl+l` to invoke CortexShell. When you do that, it will replace your current input line buffer with the suggested command. You can then edit it and press `Enter` to execute.
 
 ## Generating Code
 
@@ -549,8 +549,8 @@ By using command-line options, you can easily customize CortexShell's behavior o
 │                                 language model.                              │
 ╰──────────────────────────────────────────────────────────────────────────────╯
 ╭─ Other Options ──────────────────────────────────────────────────────────────╮
-│ --install-integration          Install shell integration (Fish, Bash, and    │
-│                                ZSH supported).                               │
+│ --install-integration          Install shell integration (Fish, Bash, ZSH    │
+│                                and Powershell supported).                    │
 │ --version                      Display the current version.                  │
 ╰──────────────────────────────────────────────────────────────────────────────╯
 ```
