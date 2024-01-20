@@ -1,0 +1,11 @@
+function _CortexShellIntegration {
+    $current_commandline = $null
+    [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$current_commandline, [ref]$null)
+
+    if (-not [string]::IsNullOrEmpty($current_commandline)) {
+        $output = ($current_commandline | cortex-shell --shell).Trim()
+        [Microsoft.PowerShell.PSConsoleReadLine]::Replace(0, $current_commandline.Length, $output)
+    }
+}
+
+Set-PSReadLineKeyHandler -Chord "Ctrl+l" -ScriptBlock { _CortexShellIntegration }

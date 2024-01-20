@@ -62,6 +62,8 @@ def install_shell_integration(*_args: Any) -> None:
     elif shell == "fish":
         shell_config_path = Path.home() / ".config" / "fish" / "config.fish"
         shell_config_path.parent.mkdir(parents=True, exist_ok=True)
+    elif shell == "powershell":
+        shell_config_path = Path.home() / "Documents" / "WindowsPowerShell" / "Microsoft.PowerShell_profile.ps1"
     else:
         typer.echo(f'Your shell "{shell}" is not supported.')
         return
@@ -82,6 +84,7 @@ def install_shell_integration(*_args: Any) -> None:
     else:
         updated_content = new_content + "\n"
 
+    shell_config_path.parent.mkdir(parents=True, exist_ok=True)
     with shell_config_path.open("w", encoding="utf-8", newline="\n") as target:
         target.write(updated_content)
 
