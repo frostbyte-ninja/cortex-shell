@@ -75,7 +75,7 @@ There is a very handy REPL (read–eval–print loop) mode, which allows you to 
 
 ```text
 cortex-shell
-Entering REPL mode, press ctrl+c to exit.
+Entering REPL mode, press Ctrl+C to exit.
 > What is REPL?
 REPL stands for Read-Eval-Print Loop. It is an interactive programming environment ...
 > How can I use Python with REPL?
@@ -106,12 +106,12 @@ I can help you with managing Linux/Arch Linux operating systems and provide assi
 If you have any questions or need help, feel free to ask.
 ```
 
-Another possibility is to enter the dedicated multiline-mode by using hotkey `ctrl+i`. In this mode, pressing `Enter` will insert a line break, instead of committing the prompt. `ctrl+d` can then be used to do that.
+Another possibility is to enter the dedicated multiline-mode by using hotkey `ctrl+e`. In this mode, pressing `Enter` will insert a line break, instead of committing the prompt. `ctrl+d` can then be used to do that.
 
 ```text
 cortex-shell
 Entering REPL mode, press Ctrl+C to exit.
-> *press ctrl+i*
+> *press ctrl+e*
 >>> tell me about
     yourself
 
