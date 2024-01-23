@@ -44,7 +44,7 @@ class ReplHandler(DefaultHandler):
     def _get_user_input(self) -> Any:
         bindings = KeyBindings()
 
-        @bindings.add(Keys.ControlI)  # type: ignore[misc]
+        @bindings.add(Keys.ControlE)  # type: ignore[misc]
         def _toggle_multiline(event: KeyPressEvent) -> None:
             self._multiline = not self._multiline
             event.app.exit()
