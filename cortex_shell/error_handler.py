@@ -6,6 +6,8 @@ import sys
 import traceback
 from typing import IO, TYPE_CHECKING, Any
 
+from click import ClickException
+
 from . import constants as C  # noqa: N812
 from .errors import FatalError
 
@@ -26,7 +28,11 @@ class ErrorHandler:
         if exc_type is None:
             return True
 
-        if exc_type.__module__ == "click.exceptions" or issubclass(exc_type, KeyboardInterrupt):
+        if (
+            exc_type.__module__ == "click.exceptions"
+            or issubclass(exc_type, KeyboardInterrupt)
+            or issubclass(exc_type, ClickException)
+        ):
             # those are handled by click
             return False
 

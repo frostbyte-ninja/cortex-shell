@@ -7,9 +7,9 @@ from ..post_processing.no_post_processing import NoPostProcessing
 from .iprocessing import IProcessing
 
 if TYPE_CHECKING:  # pragma: no cover
+    from ..configuration.schema import Role
     from ..history.ihistory import IHistory
     from ..post_processing.ipost_processing import IPostProcessing
-    from ..role import Role
     from ..types import Message
 
 

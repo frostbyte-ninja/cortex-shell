@@ -1,34 +1,58 @@
 import stat
 import sys
+from importlib import import_module, reload
 from pathlib import Path
 
 import pytest
 import typer
-import yaml
+from pydantic_yaml import to_yaml_file
 
-from cortex_shell import configuration
 from cortex_shell import constants as C  # noqa: N812
 from cortex_shell.client.iclient import IClient
-from cortex_shell.configuration.config import Config, _get_default_directory, set_cfg
+from cortex_shell.configuration.config import Config, cfg, set_cfg
+from cortex_shell.configuration.schema import BuiltinRoleShell, Options, Output, Role
 from cortex_shell.history.ihistory import IHistory
 from cortex_shell.post_processing.ipost_processing import IPostProcessing
 from cortex_shell.processing.iprocessing import IProcessing
 from cortex_shell.renderer.irenderer import IRenderer
-from cortex_shell.role import Options, Output, Role, ShellRole
 from cortex_shell.session.chat_session import ChatSession
 from cortex_shell.session.chat_session_manager import ChatSessionManager
 from cortex_shell.util import install_shell_integration
+from cortex_shell.yaml import YAML
 
 
 @pytest.fixture(autouse=True)
-def _mock_home_and_default_configuration(tmp_dir_factory, monkeypatch):
+def _mock_configuration(tmp_dir_factory, monkeypatch):
     tmp_dir = tmp_dir_factory.get()
     monkeypatch.setenv("HOME", str(tmp_dir.as_posix()))
     monkeypatch.setenv("USERPROFILE", str(tmp_dir))
     monkeypatch.setenv("HOMEDRIVE", "")
     monkeypatch.setenv("HOMEPATH", str(tmp_dir))
-    config = configuration.config.Config(tmp_dir)
-    set_cfg(config)
+
+    # reload Configuration
+    reload(import_module(f"{C.PROJECT_MODULE}.configuration.schema"))
+    reload(import_module(f"{C.PROJECT_MODULE}.configuration.config"))
+
+    set_cfg(Config())
+
+
+@pytest.fixture()
+def configuration_override(_mock_configuration):
+    def _patch_config(changes):
+        config = cfg()._config
+        config_directory = cfg()._directory
+        config_file = cfg().config_file()
+
+        for key_path, value in changes.items():
+            attribute = config
+            for key in key_path[:-1]:
+                attribute = getattr(attribute, key)
+            setattr(attribute, key_path[-1], value)
+
+        to_yaml_file(config_file, config, custom_yaml_writer=YAML())
+        set_cfg(Config(config_directory))
+
+    return _patch_config
 
 
 @pytest.fixture()
@@ -45,11 +69,6 @@ def _stdin(mocker):
             mocker.patch(f"{module_name}.has_stdin", return_value=True)
         if hasattr(module, "get_stdin"):
             mocker.patch(f"{module_name}.get_stdin", return_value="Some Text")
-
-
-@pytest.fixture()
-def mock_typer_prompt(mocker):
-    return mocker.patch("typer.prompt")
 
 
 @pytest.fixture()
@@ -84,41 +103,22 @@ def tmp_file_factory(tmp_path):
 
 @pytest.fixture()
 def mock_role():
-    options = Options(api="test_api1", model="test_model1", temperature=0.5, top_probability=0.7)
+    options = Options(api="chatgpt", model="test_model1", temperature=0.5, top_probability=0.7)
     output = Output(stream=True, formatted=False, color="blue", theme="dark")
-    return Role("role1", "description1", options, output)
+    return Role(name="role1", description="description1", options=options, output=output)
 
 
 @pytest.fixture()
 def mock_shell_role():
-    options = Options(api="test_api2", model="test_model2", temperature=0.8, top_probability=0.9)
+    options = Options(api="chatgpt", model="test_model2", temperature=0.8, top_probability=0.9)
     output = Output(stream=False, formatted=True, color="red", theme="green")
-    return ShellRole("role2", "description2", True, options, output)
-
-
-@pytest.fixture()
-def mock_config_with_env_override(tmp_dir_factory, monkeypatch):
-    def _apply_env_override(**env_vars):
-        for key, value in env_vars.items():
-            monkeypatch.setenv(key, value)
-        config = Config(tmp_dir_factory.get())
-        set_cfg(config)
-
-    return _apply_env_override
-
-
-@pytest.fixture()
-def mock_config_with_values(tmp_dir_factory):
-    def _create_existing_config_file(config_dict):
-        config_dir = _get_default_directory()
-        config_dir.mkdir(parents=True, exist_ok=True)
-        config_file = config_dir / C.CONFIG_FILE
-        with config_file.open("w") as f:
-            yaml.dump(config_dict, f)
-        config = Config()
-        set_cfg(config)
-
-    return _create_existing_config_file
+    return BuiltinRoleShell(
+        name="role2",
+        description="description2",
+        options=options,
+        output=output,
+        default_execute=True,
+    )
 
 
 @pytest.fixture()

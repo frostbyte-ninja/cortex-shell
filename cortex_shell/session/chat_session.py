@@ -7,7 +7,7 @@ from ..yaml import yaml_dump, yaml_load
 if TYPE_CHECKING:  # pragma: no cover
     from pathlib import Path
 
-    from ..role import Role
+    from ..configuration.schema import Role
     from ..types import Message
 
 
@@ -63,7 +63,7 @@ class ChatSession:
     def _yaml_load(self) -> Any:
         if not self._file_path.exists():
             return None
-        return yaml_load(self._file_path.open("r", encoding="utf-8"))
+        return yaml_load(stream=self._file_path)
 
     def _yaml_dump(self, data: Any) -> Any:
-        yaml_dump(data, self._file_path.open("w", encoding="utf-8"))
+        yaml_dump(data=data, stream=self._file_path)

@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Annotated, Optional, cast
+from typing import TYPE_CHECKING, Annotated, Optional
 
 import click
 import typer
@@ -28,11 +28,11 @@ from .processing.iprocessing import IProcessing
 from .renderer.formatted_renderer import FormattedRenderer
 from .renderer.irenderer import IRenderer
 from .renderer.plain_renderer import PlainRenderer
-from .role import ShellRole
 from .session.chat_session_manager import ChatSessionManager
 from .util import get_stdin, has_stdin, install_shell_integration, is_tty, print_version_callback
 
-# mypy: disable-error-code="union-attr"
+if TYPE_CHECKING:
+    from .configuration.schema import Role
 
 
 class Application:
@@ -323,6 +323,7 @@ class Application:
     def _select_role(self) -> None:
         self._role_name = self._role_name or cfg().default_role()
 
+        self._role: Role
         if self._code:
             self._role = cfg().get_builtin_role_code()
         elif self._describe_shell:
@@ -380,7 +381,7 @@ class Application:
     def _get_post_processing(self, client: IClient) -> IPostProcessing:
         if self._shell:
             return ShellExecutionPostProcessing(
-                cast(ShellRole, self._role),
+                cfg().get_builtin_role_shell(),
                 cfg().get_builtin_role_describe_shell(),
                 client,
             )

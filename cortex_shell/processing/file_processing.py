@@ -4,13 +4,14 @@ from typing import TYPE_CHECKING
 
 from ..history.volatile_history import VolatileHistory
 from ..post_processing.no_post_processing import NoPostProcessing
-from ..role import FILE_ROLE, Role
+from ..role import FILE_ROLE
 from ..types import Message
 from .iprocessing import IProcessing
 
 if TYPE_CHECKING:  # pragma: no cover
     from pathlib import Path
 
+    from ..configuration.schema import Role
     from ..history.ihistory import IHistory
     from ..post_processing.ipost_processing import IPostProcessing
 

@@ -6,7 +6,7 @@ from ..util import get_colored_text, print_formatted_text
 from .irenderer import IRenderer
 
 if TYPE_CHECKING:  # pragma: no cover
-    from ..role import Role
+    from ..configuration.schema import Role
 
 
 class PlainRenderer(IRenderer):
@@ -21,4 +21,4 @@ class PlainRenderer(IRenderer):
         print_formatted_text()
 
     def __call__(self, text: str, chunk: str) -> None:
-        print_formatted_text(get_colored_text(chunk, self._role.output.color or ""), end="")
+        print_formatted_text(get_colored_text(chunk, self._role.output.color), end="")
