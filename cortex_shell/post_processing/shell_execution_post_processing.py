@@ -16,13 +16,11 @@ from ..types.prompt_toolkit import RadioListHorizontal
 from ..util import get_colored_text, has_stdin, is_tty, run_command
 from .ipost_processing import IPostProcessing
 
-# mypy: disable-error-code="union-attr"
-
 if TYPE_CHECKING:  # pragma: no cover
     from ..client.iclient import IClient
+    from ..configuration.schema import BuiltinRoleDescribeShell, BuiltinRoleShell
     from ..handlers.ihandler import IHandler
     from ..renderer.irenderer import IRenderer
-    from ..role import Role, ShellRole
     from ..types import Message
 
 
@@ -33,7 +31,7 @@ class Option(Enum):
 
 
 class ShellExecutionPostProcessing(IPostProcessing):
-    def __init__(self, shell_role: ShellRole, describe_shell_role: Role, client: IClient):
+    def __init__(self, shell_role: BuiltinRoleShell, describe_shell_role: BuiltinRoleDescribeShell, client: IClient):
         self._shell_role = shell_role
         self._describe_shell_role = describe_shell_role
         self._handler = self._get_shell_describe_handler(client)

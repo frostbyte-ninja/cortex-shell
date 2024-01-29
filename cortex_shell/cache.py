@@ -5,7 +5,7 @@ from typing import Any, Callable
 
 from .configuration import cfg
 from .util import option_callback, rmtree
-from .yaml import yaml_dump
+from .yaml import yaml_dump_str
 
 
 class Cache:
@@ -66,7 +66,7 @@ class Cache:
         kwargs.pop("caching")
         # delete every message except the last one, which is the most recent user prompt
         kwargs["messages"] = kwargs["messages"][-1:]
-        return md5(yaml_dump(kwargs).encode("utf-8")).hexdigest()
+        return md5(yaml_dump_str(kwargs).encode("utf-8")).hexdigest()
 
     @classmethod
     @option_callback

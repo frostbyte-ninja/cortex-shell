@@ -1,17 +1,17 @@
 from __future__ import annotations
 
-import functools
 import os
 from pathlib import Path
 from typing import Any, Optional, cast
 
-import cfgv
+from pydantic import ValidationError
+from pydantic_yaml import to_yaml_file
 
 from .. import constants as C  # noqa: N812
 from ..errors import InvalidConfigError
-from ..role import CODE_ROLE, DEFAULT_ROLE, DESCRIBE_SHELL_ROLE, SHELL_ROLE, Options, Output, Role, ShellRole
-from ..yaml import get_default_from_schema, yaml_dump, yaml_load
-from .schema import ConfigSchemaBuilder
+from ..role import DEFAULT_ROLE
+from ..yaml import YAML, parse_yaml_file_as
+from .schema import BuiltinRoleCode, BuiltinRoleDescribeShell, BuiltinRoleShell, Configuration, Options, Output, Role
 
 
 def _get_default_directory() -> Path:
@@ -39,107 +39,101 @@ class Config:
     def _load_config(self) -> None:
         config_file = self.config_file()
 
-        config_schema = ConfigSchemaBuilder.build()
         if not config_file.exists():
-            # new config file with default values
-            self._config = get_default_from_schema(config_schema)
-            yaml_dump(self._config, config_file.open("w"))
-        else:
-            # existing config file with added default values
-            self._config = cfgv.load_from_filename(
-                filename=config_file,
-                schema=config_schema,
-                load_strategy=functools.partial(yaml_load),
-                exc_tp=InvalidConfigError,
-            )
+            to_yaml_file(config_file, Configuration(), custom_yaml_writer=YAML())
+
+        try:
+            self._config = parse_yaml_file_as(Configuration, config_file)
+
+            # Fill empty values in roles with values from the default section
+            for role in list(self._config.builtin_roles.__dict__.values()) + (self._config.roles or []):
+                role.fill_from(self.get_builtin_role_default())
+        except ValidationError as e:
+            raise InvalidConfigError(e) from None
 
     def config_file(self) -> Path:
         return self._directory / C.CONFIG_FILE
 
     def chat_gpt_api_key(self) -> str | None:
-        return cast(Optional[str], self._get_nested_value(["apis", "chatgpt", "api_key"]))
+        return cast(Optional[str], self._get_nested_value("apis", "chatgpt", "api_key"))
 
     def azure_endpoint(self) -> str | None:
-        return cast(Optional[str], self._get_nested_value(["apis", "chatgpt", "azure_endpoint"]))
+        return cast(Optional[str], self._get_nested_value("apis", "chatgpt", "azure_endpoint"))
 
     def azure_deployment(self) -> str | None:
-        return cast(Optional[str], self._get_nested_value(["apis", "chatgpt", "azure_deployment"]))
+        return cast(Optional[str], self._get_nested_value("apis", "chatgpt", "azure_deployment"))
 
     def request_timeout(self) -> int:
-        return cast(int, self._get_nested_value(["misc", "request_timeout"]))
+        return cast(int, self._get_nested_value("misc", "request_timeout"))
 
     def chat_history_path(self) -> Path:
-        return Path(self._get_nested_value(["misc", "session", "chat_history_path"]))
+        return Path(self._get_nested_value("misc", "session", "chat_history_path"))
 
     def chat_history_size(self) -> int:
-        return cast(int, self._get_nested_value(["misc", "session", "chat_history_size"]))
+        return cast(int, self._get_nested_value("misc", "session", "chat_history_size"))
 
     def chat_cache_path(self) -> Path:
-        return Path(self._get_nested_value(["misc", "session", "chat_cache_path"]))
+        return Path(self._get_nested_value("misc", "session", "chat_cache_path"))
 
     def chat_cache_size(self) -> int:
-        return cast(int, self._get_nested_value(["misc", "session", "chat_cache_size"]))
+        return cast(int, self._get_nested_value("misc", "session", "chat_cache_size"))
 
     def cache(self) -> bool:
-        return cast(bool, self._get_nested_value(["misc", "session", "cache"]))
+        return cast(bool, self._get_nested_value("misc", "session", "cache"))
 
     def default_role(self) -> str | None:
-        value = self._get_nested_value(["default", "role"])
+        value = self._get_nested_value("default", "role")
         return cast(str, value) if value else None
 
     def default_options(self) -> Options:
-        return Options(**self._get_nested_value(["default", "options"]))
+        return cast(Options, self._get_nested_value("default", "options"))
 
     def default_output(self) -> Output:
-        return Output(**self._get_nested_value(["default", "output"]))
+        return cast(Output, self._get_nested_value("default", "output"))
 
     def get_builtin_role_default(self) -> Role:
-        return Role("default", DEFAULT_ROLE, self.default_options(), self.default_output())
+        return Role(
+            name="default",
+            description=DEFAULT_ROLE,
+            options=self.default_options(),
+            output=self.default_output(),
+        )
 
-    def get_builtin_role_code(self) -> Role:
-        if val := self._get_nested_value(["builtin_roles", "code", "options"]):
-            options = Options.from_dict(val)
-        else:
-            options = self.default_options()
-        output = self.default_output()
-        output.formatted = False
-        return Role("code", CODE_ROLE, options, output)
+    def get_builtin_role_code(self) -> BuiltinRoleCode:
+        return cast(
+            BuiltinRoleCode,
+            self._get_nested_value("builtin_roles", "code"),
+        )
 
-    def get_builtin_role_shell(self) -> ShellRole:
-        if val := self._get_nested_value(["builtin_roles", "shell", "options"]):
-            options = Options.from_dict(val)
-        else:
-            options = self.default_options()
-        output = self.default_output()
-        output.formatted = False
-        default_execute = self._get_nested_value(["builtin_roles", "shell", "default_execute"])
-        return ShellRole("shell", SHELL_ROLE, default_execute, options, output)
+    def get_builtin_role_shell(self) -> BuiltinRoleShell:
+        return cast(
+            BuiltinRoleShell,
+            self._get_nested_value("builtin_roles", "shell"),
+        )
 
-    def get_builtin_role_describe_shell(self) -> Role:
-        if val := self._get_nested_value(["builtin_roles", "describe_shell", "options"]):
-            options = Options.from_dict(val)
-        else:
-            options = self.default_options()
-        output = self.default_output()
-        return Role("describe_shell", DESCRIBE_SHELL_ROLE, options, output)
+    def get_builtin_role_describe_shell(self) -> BuiltinRoleDescribeShell:
+        return cast(
+            BuiltinRoleDescribeShell,
+            self._get_nested_value("builtin_roles", "describe_shell"),
+        )
 
     def get_role(self, role_id: str) -> Role | None:
-        if self._config["roles"]:
-            role_data = next((entry for entry in self._config["roles"] if entry["name"] == role_id), None)
-            if role_data:
-                options = Options.from_dict(role_data.get("options"))
-                output = Output.from_dict(role_data.get("output"))
-                role = Role(role_data["name"], role_data["description"], options, output)
-                role.fill_from(self.get_builtin_role_default())
-                return role
-        return None
+        roles = self._get_nested_value("roles")
+        if not roles:
+            return None
 
-    def _get_nested_value(self, keys: list[str], default: Any = None) -> Any:
-        return functools.reduce(
-            lambda d, key: d.get(key, default) if isinstance(d, dict) else default,
-            keys,
-            self._config,
-        )
+        return next((role for role in roles if role.name == role_id), None)
+
+    def _get_nested_value(self, *keys: str) -> Any:
+        current_value: Any = self._config
+        for key in keys:
+            if isinstance(current_value, dict):
+                current_value = current_value.get(key)
+            else:
+                current_value = getattr(current_value, key, None)
+            if current_value is None:
+                break
+        return current_value
 
 
 _cfg = None
