@@ -1,10 +1,11 @@
 from pathlib import Path
 
 import pytest
+from pydantic import ValidationError
 
 from cortex_shell import constants as C  # noqa: N812
 from cortex_shell.configuration.config import Config, _get_default_directory, cfg
-from cortex_shell.errors import InvalidConfigError
+from cortex_shell.configuration.schema import Configuration
 from cortex_shell.role import CODE_ROLE, DEFAULT_ROLE, DESCRIBE_SHELL_ROLE, SHELL_ROLE
 from cortex_shell.util import get_temp_dir, os_name, shell_name
 
@@ -279,7 +280,7 @@ class TestInvalidConfig:
         ],
     )
     def test_invalid_config(self, configuration_override, changes):
-        with pytest.raises(InvalidConfigError):
+        with pytest.raises(ValidationError):
             configuration_override(changes)
 
 
@@ -332,7 +333,7 @@ class TestOverrideConfig:
             ("default", "options", "temperature"): 0.5,
             ("default", "options", "top_probability"): 0.7,
         }
-        configuration_override(changes)
+        configuration_override(changes, Configuration())
 
         for role in (
             cfg().get_builtin_role_code(),

@@ -21,7 +21,6 @@ class YAML(ruamel.yaml.YAML):
         self.width = 100000
         self.default_flow_style = False
         self.allow_unicode = True
-        self.preserve_quotes = True
         self.pure = True
         self.typ = "safe"
 

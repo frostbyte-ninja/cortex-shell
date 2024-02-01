@@ -1,10 +1,21 @@
+from __future__ import annotations
+
 import stat
 import subprocess
 
 import pytest
+from pydantic import BaseModel
 
 from cortex_shell import constants as C  # noqa: N812  # noqa: N812
-from cortex_shell.util import get_colored_text, get_resource_file, os_name, rmtree, run_command, shell_name
+from cortex_shell.util import (
+    fill_values,
+    get_colored_text,
+    get_resource_file,
+    os_name,
+    rmtree,
+    run_command,
+    shell_name,
+)
 from testing.util import get_path_to_shell, get_test_resource_file, ignore_if_windows, prepend_dir_to_path
 
 
@@ -289,3 +300,63 @@ class TestRmTree:
         rmtree(a_dir)
 
         assert not a_dir.exists()
+
+
+class D(BaseModel):
+    d1: str | None = "nested"
+
+
+class B(BaseModel):
+    b1: str | None = "hello"
+    b2: dict[str, str] | None = {"key": "value"}
+    b3: D | None = D()
+
+
+class A(BaseModel):
+    a1: int | None = 1
+    a2: list[int] | None = [1, 2, 3]
+    a3: B | None = B()
+
+
+class TestFillValues:
+    def test_all_none(self):
+        source = A()
+        target = A()
+        target.a1 = None
+        target.a2 = None
+        target.a3 = None
+
+        fill_values(source, target)
+
+        assert target == source
+
+    def test_keep_existing_values(self):
+        source = A()
+        target = A()
+        target.a1 = 2
+        target.a2 = [4, 5, 6]
+        target.a3.b1 = None
+        target.a3.b2 = {"abc": "def"}
+        target.a3.b3.d1 = "none"
+
+        fill_values(source, target)
+
+        assert target.a1 == 2
+        assert target.a2 == [4, 5, 6]
+        assert target.a3.b2 == {"abc": "def"}
+        assert target.a3.b3.d1 == "none"
+
+    def test_keep_empty_existing_containers(self):
+        source = A()
+        target = A()
+        target.a2 = []
+        target.a3.b1 = ""
+        target.a3.b2 = {}
+        target.a3.b3.d1 = ""
+
+        fill_values(source, target)
+
+        assert target.a2 == []
+        assert target.a3.b1 == ""  # noqa: PLC1901
+        assert target.a3.b2 == {}
+        assert target.a3.b3.d1 == ""  # noqa: PLC1901

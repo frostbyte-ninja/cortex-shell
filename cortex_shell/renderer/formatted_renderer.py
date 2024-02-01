@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 from rich.live import Live
 from rich.markdown import Markdown
+from typing_extensions import Self
 
 from .irenderer import IRenderer
 
@@ -17,7 +18,7 @@ class FormattedRenderer(IRenderer):
         self._role = role
         self._live: Live | None = None
 
-    def __enter__(self) -> IRenderer:
+    def __enter__(self) -> Self:
         # A new Live object must be created so that we can start with a fresh cursor offset
         self._live = Live(vertical_overflow="visible", auto_refresh=False)
         self._live.__enter__()

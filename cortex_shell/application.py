@@ -5,6 +5,7 @@ import click
 import typer
 from click import ClickException, FileError, UsageError
 from identify import identify
+from pydantic import ValidationError
 
 from . import errors
 from .cache import Cache
@@ -12,6 +13,7 @@ from .client.chatgpt_client import ChatGptClient
 from .client.iclient import IClient
 from .configuration import cfg
 from .error_handler import ErrorHandler
+from .errors import InvalidConfigError
 from .handlers.default_handler import DefaultHandler
 from .handlers.ihandler import IHandler
 from .handlers.repl_handler import ReplHandler
@@ -397,7 +399,7 @@ class Application:
             return DefaultProcessing(self._role, history, post_processing)
 
     def _get_renderer(self) -> IRenderer:
-        if self._role.output.formatted and is_tty() and not self._shell and not self._code:
+        if self._role.output.formatted and is_tty():
             return FormattedRenderer(self._role)
         else:
             return PlainRenderer(self._role)
@@ -435,13 +437,16 @@ class Application:
             ("theme", self._theme),
         ]
 
-        for option, value in options_to_override:
-            if value is not None:
-                setattr(self._role.options, option, value)
+        try:
+            for option, value in options_to_override:
+                if value is not None:
+                    setattr(self._role.options, option, value)
 
-        for option, value in output_to_override:
-            if value is not None:
-                setattr(self._role.output, option, value)
+            for option, value in output_to_override:
+                if value is not None:
+                    setattr(self._role.output, option, value)
+        except ValidationError as e:
+            raise InvalidConfigError(e) from None
 
 
 def run() -> None:
