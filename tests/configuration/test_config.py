@@ -106,7 +106,7 @@ class TestDefaultConfig:
         assert role.output == cfg().default_output()
 
     def test_get_role(self):
-        assert not cfg()._config.roles
+        assert not cfg().model.roles
 
 
 class TestModifiedConfig:
