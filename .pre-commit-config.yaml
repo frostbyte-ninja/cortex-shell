@@ -48,14 +48,14 @@ repos:
         additional_dependencies:
           - "pydantic"
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.1.14
+    rev: v0.1.15
     hooks:
       - id: ruff-format
         alias: ruff-format
         name: ruff-format
         args: [--preview]
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.1.14
+    rev: v0.1.15
     hooks:
       - id: ruff
         alias: ruff-lint
