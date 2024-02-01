@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Annotated
 
-from pydantic import AfterValidator, ConfigDict, Field
+from pydantic import AfterValidator, BeforeValidator, ConfigDict, Field
 from pydantic import BaseModel as PydanticBaseModel
 from typing_extensions import Self
 
@@ -19,7 +19,7 @@ from .validator import (
     description_validator,
 )
 
-PathType = Annotated[str, AfterValidator(check_path)]
+PathType = Annotated[Path, BeforeValidator(check_path)]
 ApiType = Annotated[str, AfterValidator(check_api)]
 ColorType = Annotated[str, AfterValidator(check_color)]
 UrlType = Annotated[str, AfterValidator(check_url)]
@@ -53,9 +53,9 @@ class APIs(BaseModel):
 
 
 class Session(BaseModel):
-    chat_history_path: PathType = Field(str((Path.home() / ".cache" / C.PROJECT_NAME / "history").resolve()))
+    chat_history_path: PathType = Field((Path.home() / ".cache" / C.PROJECT_NAME / "history").resolve())
     chat_history_size: int = Field(100, gt=0)
-    chat_cache_path: PathType = Field(str((get_temp_dir() / C.PROJECT_NAME / "cache").resolve()))
+    chat_cache_path: PathType = Field((get_temp_dir() / C.PROJECT_NAME / "cache").resolve())
     chat_cache_size: int = Field(100, gt=0)
     cache: bool = True
 

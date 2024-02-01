@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import Any, Optional, cast
 
 from pydantic import ValidationError
 
@@ -50,7 +49,7 @@ class Config:
             to_yaml_file(config_file, Configuration())
 
         try:
-            self._config = from_yaml_file(Configuration, config_file).populate_roles()
+            self.model = from_yaml_file(Configuration, config_file).populate_roles()
         except ValidationError as e:
             raise InvalidConfigError(e) from None
 
@@ -61,41 +60,40 @@ class Config:
         return self._directory / C.CONFIG_FILE
 
     def chat_gpt_api_key(self) -> str | None:
-        return cast(Optional[str], self._get_nested_value("apis", "chatgpt", "api_key"))
+        return self.model.apis.chatgpt.api_key
 
     def azure_endpoint(self) -> str | None:
-        return cast(Optional[str], self._get_nested_value("apis", "chatgpt", "azure_endpoint"))
+        return self.model.apis.chatgpt.azure_endpoint
 
     def azure_deployment(self) -> str | None:
-        return cast(Optional[str], self._get_nested_value("apis", "chatgpt", "azure_deployment"))
+        return self.model.apis.chatgpt.azure_deployment
 
     def request_timeout(self) -> int:
-        return cast(int, self._get_nested_value("misc", "request_timeout"))
+        return self.model.misc.request_timeout
 
     def chat_history_path(self) -> Path:
-        return Path(self._get_nested_value("misc", "session", "chat_history_path"))
+        return self.model.misc.session.chat_history_path
 
     def chat_history_size(self) -> int:
-        return cast(int, self._get_nested_value("misc", "session", "chat_history_size"))
+        return self.model.misc.session.chat_history_size
 
     def chat_cache_path(self) -> Path:
-        return Path(self._get_nested_value("misc", "session", "chat_cache_path"))
+        return self.model.misc.session.chat_cache_path
 
     def chat_cache_size(self) -> int:
-        return cast(int, self._get_nested_value("misc", "session", "chat_cache_size"))
+        return self.model.misc.session.chat_cache_size
 
     def cache(self) -> bool:
-        return cast(bool, self._get_nested_value("misc", "session", "cache"))
+        return self.model.misc.session.cache
 
     def default_role(self) -> str | None:
-        value = self._get_nested_value("default", "role")
-        return cast(str, value) if value else None
+        return self.model.default.role
 
     def default_options(self) -> Options:
-        return cast(Options, self._get_nested_value("default", "options"))
+        return self.model.default.options
 
     def default_output(self) -> Output:
-        return cast(Output, self._get_nested_value("default", "output"))
+        return self.model.default.output
 
     def get_builtin_role_default(self) -> Role:
         return Role(
@@ -106,40 +104,16 @@ class Config:
         )
 
     def get_builtin_role_code(self) -> BuiltinRoleCode:
-        return cast(
-            BuiltinRoleCode,
-            self._get_nested_value("builtin_roles", "code"),
-        )
+        return self.model.builtin_roles.code
 
     def get_builtin_role_shell(self) -> BuiltinRoleShell:
-        return cast(
-            BuiltinRoleShell,
-            self._get_nested_value("builtin_roles", "shell"),
-        )
+        return self.model.builtin_roles.shell
 
     def get_builtin_role_describe_shell(self) -> BuiltinRoleDescribeShell:
-        return cast(
-            BuiltinRoleDescribeShell,
-            self._get_nested_value("builtin_roles", "describe_shell"),
-        )
+        return self.model.builtin_roles.describe_shell
 
     def get_role(self, role_id: str) -> Role | None:
-        roles = self._get_nested_value("roles")
-        if not roles:
-            return None
-
-        return next((role for role in roles if role.name == role_id), None)
-
-    def _get_nested_value(self, *keys: str) -> Any:
-        current_value: Any = self._config
-        for key in keys:
-            if isinstance(current_value, dict):
-                current_value = current_value.get(key)
-            else:
-                current_value = getattr(current_value, key, None)
-            if current_value is None:
-                break
-        return current_value
+        return next((role for role in self.model.roles or [] if role.name == role_id), None)
 
 
 _cfg = None

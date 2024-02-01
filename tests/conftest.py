@@ -38,7 +38,7 @@ def _mock_configuration(tmp_dir_factory, monkeypatch):
 @pytest.fixture()
 def configuration_override(_mock_configuration):
     def _apply_config_changes(config_changes, config_instance=None):
-        config = config_instance if config_instance is not None else cfg()._config
+        config = config_instance if config_instance is not None else cfg().model
 
         for key_path, value in config_changes.items():
             attribute = config
