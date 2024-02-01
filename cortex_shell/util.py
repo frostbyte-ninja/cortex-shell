@@ -9,6 +9,8 @@ import shutil
 import stat
 import subprocess
 import sys
+from collections.abc import Container
+from copy import deepcopy
 from importlib import resources
 from pathlib import Path
 from tempfile import gettempdir
@@ -21,6 +23,7 @@ import typer
 from pathvalidate import is_valid_filepath
 from prompt_toolkit import print_formatted_text as print_formatted_text_orig
 from prompt_toolkit.formatted_text import FormattedText
+from pydantic import BaseModel
 
 from . import constants as C  # noqa: N812
 
@@ -222,3 +225,15 @@ def rmtree(path: Path) -> None:
         else:
             # remove this when Python 3.12 becomes the oldest supported release
             shutil.rmtree(path, onerror=lambda func, path_str, exc: handle_remove_readonly(func, path_str, exc[1]))
+
+
+def fill_values(source: BaseModel, target: BaseModel) -> None:
+    for attr, value in vars(source).items():
+        target_value = getattr(target, attr, None)
+
+        if target_value is None:
+            setattr(target, attr, deepcopy(value))
+        elif isinstance(value, Container) and not target_value:
+            continue
+        elif isinstance(value, BaseModel) and isinstance(target_value, BaseModel):
+            fill_values(value, target_value)

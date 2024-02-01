@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from typing_extensions import Self
+
 from ..util import get_colored_text, print_formatted_text
 from .irenderer import IRenderer
 
@@ -13,7 +15,7 @@ class PlainRenderer(IRenderer):
     def __init__(self, role: Role):
         self._role = role
 
-    def __enter__(self) -> IRenderer:
+    def __enter__(self) -> Self:
         return self
 
     def __exit__(self, *args: object) -> None:

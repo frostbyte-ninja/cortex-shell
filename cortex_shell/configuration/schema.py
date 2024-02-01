@@ -3,11 +3,13 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Annotated
 
-from pydantic import AfterValidator, BaseModel, Field
+from pydantic import AfterValidator, ConfigDict, Field
+from pydantic import BaseModel as PydanticBaseModel
+from typing_extensions import Self
 
 from .. import constants as C  # noqa: N812
 from ..role import CODE_ROLE, DESCRIBE_SHELL_ROLE, SHELL_ROLE
-from ..util import get_temp_dir
+from ..util import fill_values, get_temp_dir
 from .validator import (
     check_api,
     check_color,
@@ -24,11 +26,20 @@ UrlType = Annotated[str, AfterValidator(check_url)]
 TemperatureType = Annotated[float, Field(ge=0.0, le=2.0)]
 TopProbabilityType = Annotated[float, Field(ge=0.0, le=1.0)]
 BuiltinRoleNameType = Annotated[str, AfterValidator(check_role_name), Field(exclude=True)]
+DescriptionType = Annotated[
+    str,
+    AfterValidator(description_validator),
+    Field(validate_default=True),
+]
 BuiltinDescriptionType = Annotated[
     str,
     AfterValidator(description_validator),
     Field(exclude=True, validate_default=True),
 ]
+
+
+class BaseModel(PydanticBaseModel):
+    model_config = ConfigDict(validate_assignment=True, strict=True)
 
 
 class ChatGPT(BaseModel):
@@ -76,15 +87,9 @@ class Default(BaseModel):
 
 class Role(BaseModel):
     name: str
-    description: BuiltinDescriptionType
+    description: DescriptionType
     options: Options | None = None
-    output: Output | None = None
-
-    def fill_from(self, other: Role) -> Role:
-        for attr, value in self.__dict__.items():
-            if value is None:
-                setattr(self, attr, getattr(other, attr))
-        return self
+    output: Output | None = Field(None, exclude=True)
 
 
 class BuiltinRoleCode(Role):
@@ -115,3 +120,16 @@ class Configuration(BaseModel):
     default: Default = Default()
     builtin_roles: BuiltinRoles = BuiltinRoles()
     roles: list[Role] | None = None
+
+    def populate_roles(self) -> Self:
+        # Fill empty values in roles with values from the default section
+        for role in list(self.builtin_roles.__dict__.values()) + (self.roles or []):
+            fill_values(
+                Role(name="", description="", options=self.default.options, output=self.default.output),
+                role,
+            )
+
+        self.builtin_roles.shell.output.formatted = False
+        self.builtin_roles.code.output.formatted = False
+
+        return self

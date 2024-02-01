@@ -9,7 +9,7 @@ class FatalError(RuntimeError):
 class InvalidConfigError(UsageError):
     def __init__(self, validation_error: ValidationError) -> None:
         errors = validation_error.errors()
-        output = [f"{len(errors)} errors in configuration"]
+        output = [f"{len(errors)} configuration errors"]
         for error in errors:
             location = ".".join(map(str, error["loc"]))
             output.append(f"{location}: {error['msg']}")

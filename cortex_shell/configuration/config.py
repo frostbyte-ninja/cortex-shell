@@ -50,13 +50,12 @@ class Config:
             to_yaml_file(config_file, Configuration())
 
         try:
-            self._config = from_yaml_file(Configuration, config_file)
-
-            # Fill empty values in roles with values from the default section
-            for role in list(self._config.builtin_roles.__dict__.values()) + (self._config.roles or []):
-                role.fill_from(self.get_builtin_role_default())
+            self._config = from_yaml_file(Configuration, config_file).populate_roles()
         except ValidationError as e:
             raise InvalidConfigError(e) from None
+
+    def config_directory(self) -> Path:
+        return self._directory
 
     def config_file(self) -> Path:
         return self._directory / C.CONFIG_FILE
