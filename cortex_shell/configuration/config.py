@@ -5,13 +5,20 @@ from pathlib import Path
 from typing import Any, Optional, cast
 
 from pydantic import ValidationError
-from pydantic_yaml import to_yaml_file
 
 from .. import constants as C  # noqa: N812
 from ..errors import InvalidConfigError
 from ..role import DEFAULT_ROLE
-from ..yaml import YAML, parse_yaml_file_as
-from .schema import BuiltinRoleCode, BuiltinRoleDescribeShell, BuiltinRoleShell, Configuration, Options, Output, Role
+from ..yaml import from_yaml_file, to_yaml_file
+from .schema import (
+    BuiltinRoleCode,
+    BuiltinRoleDescribeShell,
+    BuiltinRoleShell,
+    Configuration,
+    Options,
+    Output,
+    Role,
+)
 
 
 def _get_default_directory() -> Path:
@@ -40,10 +47,10 @@ class Config:
         config_file = self.config_file()
 
         if not config_file.exists():
-            to_yaml_file(config_file, Configuration(), custom_yaml_writer=YAML())
+            to_yaml_file(config_file, Configuration())
 
         try:
-            self._config = parse_yaml_file_as(Configuration, config_file)
+            self._config = from_yaml_file(Configuration, config_file)
 
             # Fill empty values in roles with values from the default section
             for role in list(self._config.builtin_roles.__dict__.values()) + (self._config.roles or []):

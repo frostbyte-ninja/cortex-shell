@@ -5,7 +5,6 @@ from pathlib import Path
 
 import pytest
 import typer
-from pydantic_yaml import to_yaml_file
 
 from cortex_shell import constants as C  # noqa: N812
 from cortex_shell.client.iclient import IClient
@@ -18,7 +17,7 @@ from cortex_shell.renderer.irenderer import IRenderer
 from cortex_shell.session.chat_session import ChatSession
 from cortex_shell.session.chat_session_manager import ChatSessionManager
 from cortex_shell.util import install_shell_integration
-from cortex_shell.yaml import YAML
+from cortex_shell.yaml import to_yaml_file
 
 
 @pytest.fixture(autouse=True)
@@ -49,7 +48,7 @@ def configuration_override(_mock_configuration):
                 attribute = getattr(attribute, key)
             setattr(attribute, key_path[-1], value)
 
-        to_yaml_file(config_file, config, custom_yaml_writer=YAML())
+        to_yaml_file(config_file, config)
         set_cfg(Config(config_directory))
 
     return _patch_config
