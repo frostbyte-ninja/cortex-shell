@@ -122,8 +122,10 @@ class Configuration(BaseModel):
     roles: list[Role] | None = None
 
     def populate_roles(self) -> Self:
+        self.roles = self.roles if self.roles is not None else []
+
         # Fill empty values in roles with values from the default section
-        for role in list(self.builtin_roles.__dict__.values()) + (self.roles or []):
+        for role in list(self.builtin_roles.__dict__.values()) + self.roles:
             fill_values(
                 Role(name="", description="", options=self.default.options, output=self.default.output),
                 role,
