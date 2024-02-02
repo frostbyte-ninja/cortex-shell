@@ -113,7 +113,7 @@ class Config:
         return self.model.builtin_roles.describe_shell
 
     def get_role(self, role_id: str) -> Role | None:
-        return next((role for role in self.model.roles or [] if role.name == role_id), None)
+        return next((role for role in self.model.roles if role.name == role_id), None)
 
 
 _cfg = None
