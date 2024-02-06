@@ -68,7 +68,7 @@ class ChatGptClient(BaseClient):
             return AzureOpenAI(
                 api_key=self._api_key,
                 timeout=self._timeout,
-                api_version="2023-09-01-preview",
+                api_version="2023-12-01-preview",
                 azure_endpoint=self._azure_endpoint,
                 azure_deployment=self._azure_deployment,
             )
