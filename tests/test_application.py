@@ -16,7 +16,6 @@ def app(mocker, mock_client, monkeypatch):
     mocker.patch(f"{C.PROJECT_MODULE}.application.Application._get_client", new=mock_client)
 
     def invoke_app(prompt: str = "", **kwargs: Any) -> Result:
-        runner = CliRunner()
         app = typer.Typer()
         app.command()(Application)
 
@@ -27,7 +26,7 @@ def app(mocker, mock_client, monkeypatch):
                 continue
             arguments.append(value)
         arguments.insert(0, "--no-cache")
-        return runner.invoke(app, arguments)
+        return CliRunner().invoke(app, arguments)
 
     return invoke_app
 
@@ -119,3 +118,13 @@ class TestValidateOptions:
 
         assert result.exit_code == 2
         assert "Only one of --shell, --output-file options" in result.stdout
+
+
+class TestConfig:
+    def test_no_api_key_error(self):
+        app = typer.Typer()
+        app.command()(Application)
+
+        result = CliRunner().invoke(app, "prompt_input")
+
+        assert result.exit_code == 2
