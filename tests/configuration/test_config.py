@@ -28,13 +28,10 @@ class TestConfig:
 
 class TestDefaultConfig:
     def test_chat_gpt_api_key(self):
-        assert cfg().chat_gpt_api_key() is None
+        assert cfg().chat_gpt().api_key is None
 
     def test_azure_endpoint(self):
-        assert cfg().azure_endpoint() is None
-
-    def test_azure_deployment(self):
-        assert cfg().azure_deployment() is None
+        assert cfg().chat_gpt().azure_endpoint is None
 
     def test_request_timeout(self):
         assert cfg().request_timeout() == 10
@@ -114,19 +111,13 @@ class TestModifiedConfig:
         api_key = "12345678"
         changes = {("apis", "chatgpt", "api_key"): api_key}
         configuration_override(changes)
-        assert cfg().chat_gpt_api_key() == api_key
+        assert cfg().chat_gpt().api_key == api_key
 
     def test_azure_endpoint(self, configuration_override):
         endpoint = "https://example.com"
         changes = {("apis", "chatgpt", "azure_endpoint"): endpoint}
         configuration_override(changes)
         assert cfg().azure_endpoint() == endpoint
-
-    def test_azure_deployment(self, configuration_override):
-        deployment = "test_deployment"
-        changes = {("apis", "chatgpt", "azure_deployment"): deployment}
-        configuration_override(changes)
-        assert cfg().azure_deployment() == deployment
 
     def test_request_timeout(self, configuration_override):
         timeout = 15

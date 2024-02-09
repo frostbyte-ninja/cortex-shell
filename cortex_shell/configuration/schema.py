@@ -45,7 +45,6 @@ class BaseModel(PydanticBaseModel):
 class ChatGPT(BaseModel):
     api_key: str | None = None
     azure_endpoint: UrlType | None = None
-    azure_deployment: str | None = None
 
 
 class APIs(BaseModel):

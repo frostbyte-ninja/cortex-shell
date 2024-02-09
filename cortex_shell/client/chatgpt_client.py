@@ -21,12 +21,10 @@ class ChatGptClient(BaseClient):
         api_key: str,
         timeout: int,
         azure_endpoint: str | None = None,
-        azure_deployment: str | None = None,
     ) -> None:
         super().__init__()
         self._api_key = api_key
         self._azure_endpoint = azure_endpoint
-        self._azure_deployment = azure_deployment
         self._timeout = timeout
 
     def _request(
@@ -37,7 +35,7 @@ class ChatGptClient(BaseClient):
         top_probability: float,
         stream: bool,
     ) -> Generator[str, None, None]:
-        client = self._get_client()
+        client = self._get_client(model)
 
         try:
             response = client.chat.completions.create(
@@ -52,14 +50,14 @@ class ChatGptClient(BaseClient):
 
         yield from self._process_response(response, stream)
 
-    def _get_client(self) -> AzureOpenAI | OpenAI:
+    def _get_client(self, model: str) -> AzureOpenAI | OpenAI:
         if self._azure_endpoint:
             return AzureOpenAI(
                 api_key=self._api_key,
                 timeout=self._timeout,
                 api_version="2023-12-01-preview",
                 azure_endpoint=self._azure_endpoint,
-                azure_deployment=self._azure_deployment,
+                azure_deployment=model,
             )
         else:
             return OpenAI(api_key=self._api_key, timeout=self._timeout)

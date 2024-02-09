@@ -13,6 +13,7 @@ from .schema import (
     BuiltinRoleCode,
     BuiltinRoleDescribeShell,
     BuiltinRoleShell,
+    ChatGPT,
     Configuration,
     Options,
     Output,
@@ -59,14 +60,11 @@ class Config:
     def config_file(self) -> Path:
         return self._directory / C.CONFIG_FILE
 
-    def chat_gpt_api_key(self) -> str | None:
-        return self.model.apis.chatgpt.api_key
+    def chat_gpt(self) -> ChatGPT | None:
+        return self.model.apis.chatgpt
 
     def azure_endpoint(self) -> str | None:
         return self.model.apis.chatgpt.azure_endpoint
-
-    def azure_deployment(self) -> str | None:
-        return self.model.apis.chatgpt.azure_deployment
 
     def request_timeout(self) -> int:
         return self.model.misc.request_timeout
