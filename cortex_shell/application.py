@@ -336,7 +336,7 @@ class Application:
             if role := cfg().get_role(self._role_name):
                 self._role = role
             else:
-                raise UsageError(f"No such role: {self._role_name}")
+                raise ClickException(f"No such role: {self._role_name}")
         else:
             self._role = cfg().get_builtin_role_default()
 
@@ -363,7 +363,7 @@ class Application:
                 caching=cache,
             )
         except errors.ApiError as e:
-            raise UsageError(f"API error: {e}") from e
+            raise ClickException(f"API error: {e}") from e
         except errors.RequestTimeoutError as e:
             raise ClickException("API request timed out") from e
 
@@ -409,9 +409,9 @@ class Application:
                     cfg().azure_deployment(),
                 )
             else:
-                raise UsageError(f"No OpenAI API key, check {cfg().config_file()}")
+                raise ClickException(f"No OpenAI API key, check {cfg().config_file()}")
         else:
-            raise UsageError(f"Unknown API: {api}")
+            raise ClickException(f"Unknown API: {api}")
 
     def _get_handler(self, client: IClient, processing: IProcessing, renderer: IRenderer) -> IHandler:
         if self._repl:

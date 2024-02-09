@@ -127,4 +127,4 @@ class TestConfig:
 
         result = CliRunner().invoke(app, "prompt_input")
 
-        assert result.exit_code == 2
+        assert result.exit_code == 1
