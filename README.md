@@ -436,18 +436,17 @@ You can set up some parameters in the runtime configuration file `~/.config/cort
 apis:
   chatgpt:
     api_key: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx # your api key
-    # these settings are only required if you are accessing chatgpt over azure
-    azure_endpoint: https://xxxx.azure.com
-    azure_deployment: xxxxxxx
+    azure_endpoint: https://xxxx.azure.com # this setting is only required if you are accessing ChatGPT via Azure
 misc:
   request_timeout: 10
   session:
-    chat_history_path: /tmp/cortex-shell/history
+    chat_history_path: /home/user/.cache/cortex-shell/history
     chat_history_size: 100
     chat_cache_path: /tmp/cortex-shell/cache
     chat_cache_size: 100
     cache: true
 default:
+  role: # set a new default role. must be defined in "roles"
   options:
     api: chatgpt # only valid option is "chatgpt" currently
     model: gpt-4-1106-preview
