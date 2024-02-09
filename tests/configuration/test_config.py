@@ -117,7 +117,7 @@ class TestModifiedConfig:
         endpoint = "https://example.com"
         changes = {("apis", "chatgpt", "azure_endpoint"): endpoint}
         configuration_override(changes)
-        assert cfg().azure_endpoint() == endpoint
+        assert cfg().chat_gpt().azure_endpoint == endpoint
 
     def test_request_timeout(self, configuration_override):
         timeout = 15

@@ -63,9 +63,6 @@ class Config:
     def chat_gpt(self) -> ChatGPT | None:
         return self.model.apis.chatgpt
 
-    def azure_endpoint(self) -> str | None:
-        return self.model.apis.chatgpt.azure_endpoint
-
     def request_timeout(self) -> int:
         return self.model.misc.request_timeout
 
