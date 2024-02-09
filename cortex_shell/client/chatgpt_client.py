@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, cast
 
 import httpx
-from openai import APIConnectionError, APITimeoutError, AuthenticationError, AzureOpenAI, NotFoundError, OpenAI, Stream
+from openai import APIError, AzureOpenAI, OpenAI, Stream
 from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 
 from .. import errors
@@ -37,9 +37,6 @@ class ChatGptClient(BaseClient):
         top_probability: float,
         stream: bool,
     ) -> Generator[str, None, None]:
-        if not self._api_key:
-            raise errors.AuthenticationError("No OpenAI API key")
-
         client = self._get_client()
 
         try:
@@ -50,16 +47,8 @@ class ChatGptClient(BaseClient):
                 top_p=top_probability,
                 stream=stream,
             )
-        except AuthenticationError as e:
-            raise errors.AuthenticationError("OpenAI authentication error") from e
-        except NotFoundError as e:
-            raise errors.DeploymentNotFoundError(
-                f'Chat completion deployment "{self._azure_deployment}" not found on endpoint {self._azure_endpoint}',
-            ) from e
-        except APITimeoutError as e:
-            raise errors.RequestTimeoutError from e
-        except APIConnectionError as e:
-            raise errors.ConnectError from e
+        except APIError as e:
+            raise errors.ApiError(e) from e
 
         yield from self._process_response(response, stream)
 

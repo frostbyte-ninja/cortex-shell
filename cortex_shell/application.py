@@ -362,16 +362,10 @@ class Application:
                 stream=self._role.output.stream,
                 caching=cache,
             )
-        except errors.AuthenticationError as e:
-            raise UsageError(f'Authentication Error: "{e}", check API key in {cfg().config_file()}') from e
-        except errors.DeploymentNotFoundError as e:
-            raise UsageError(str(e)) from e
+        except errors.ApiError as e:
+            raise UsageError(f"API error: {e}") from e
         except errors.RequestTimeoutError as e:
             raise ClickException("API request timed out") from e
-        except errors.ConnectError as e:
-            raise ClickException("API connection error") from e
-        except ValueError as e:
-            raise UsageError(str(e)) from e
 
     def _get_history(self) -> IHistory:
         if self._chat_id:
@@ -407,12 +401,15 @@ class Application:
     def _get_client(self) -> IClient:
         api = self._role.options.api
         if api == "chatgpt":
-            return ChatGptClient(
-                cfg().chat_gpt_api_key(),  # type: ignore[arg-type]
-                cfg().request_timeout(),
-                cfg().azure_endpoint(),
-                cfg().azure_deployment(),
-            )
+            if api_key := cfg().chat_gpt_api_key():
+                return ChatGptClient(
+                    api_key,
+                    cfg().request_timeout(),
+                    cfg().azure_endpoint(),
+                    cfg().azure_deployment(),
+                )
+            else:
+                raise UsageError(f"No OpenAI API key, check {cfg().config_file()}")
         else:
             raise UsageError(f"Unknown API: {api}")
 
