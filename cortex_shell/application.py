@@ -401,12 +401,11 @@ class Application:
     def _get_client(self) -> IClient:
         api = self._role.options.api
         if api == "chatgpt":
-            if api_key := cfg().chat_gpt_api_key():
+            if api_key := cfg().chat_gpt().api_key:
                 return ChatGptClient(
                     api_key,
                     cfg().request_timeout(),
-                    cfg().azure_endpoint(),
-                    cfg().azure_deployment(),
+                    cfg().chat_gpt().azure_endpoint,
                 )
             else:
                 raise ClickException(f"No OpenAI API key, check {cfg().config_file()}")
