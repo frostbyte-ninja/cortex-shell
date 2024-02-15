@@ -8,8 +8,8 @@ import typer
 
 from cortex_shell import constants as C  # noqa: N812
 from cortex_shell.client.iclient import IClient
-from cortex_shell.configuration.config import Config, cfg, set_cfg
-from cortex_shell.configuration.schema import BuiltinRoleShell, Options, Output, Role
+from cortex_shell.configuration.config import ConfigurationManager, cfg, set_cfg
+from cortex_shell.configuration.schema import BuiltinRoleShell, Configuration, Options, Output, Role
 from cortex_shell.history.ihistory import IHistory
 from cortex_shell.post_processing.ipost_processing import IPostProcessing
 from cortex_shell.processing.iprocessing import IProcessing
@@ -32,22 +32,24 @@ def _mock_configuration(tmp_dir_factory, monkeypatch):
     reload(import_module(f"{C.PROJECT_MODULE}.configuration.schema"))
     reload(import_module(f"{C.PROJECT_MODULE}.configuration.config"))
 
-    set_cfg(Config())
+    set_cfg(ConfigurationManager())
 
 
 @pytest.fixture()
 def configuration_override(_mock_configuration):
     def _apply_config_changes(config_changes, config_instance=None):
         config = config_instance if config_instance is not None else cfg().model
+        config_dict = config.dict()
 
         for key_path, value in config_changes.items():
-            attribute = config
+            attribute = config_dict
             for key in key_path[:-1]:
-                attribute = getattr(attribute, key)
-            setattr(attribute, key_path[-1], value)
+                attribute = attribute[key]
+            attribute[key_path[-1]] = value
 
-        to_yaml_file(cfg().config_file(), config)
-        set_cfg(Config(cfg().config_directory()))
+        modified_config = Configuration(**config_dict)
+        to_yaml_file(cfg().config_file(), modified_config)
+        set_cfg(ConfigurationManager(cfg().config_directory()))
 
     return _apply_config_changes
 

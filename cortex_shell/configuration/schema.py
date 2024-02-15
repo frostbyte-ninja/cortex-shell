@@ -64,44 +64,48 @@ class Misc(BaseModel):
 
 
 class Options(BaseModel):
-    api: ApiType = "chatgpt"
-    model: str = "gpt-4-1106-preview"
-    temperature: TemperatureType = 0.1
-    top_probability: TopProbabilityType = 1.0
+    api: ApiType | None = None
+    model: str | None = None
+    temperature: TemperatureType | None = None
+    top_probability: TopProbabilityType | None = None
 
 
 class Output(BaseModel):
-    stream: bool = True
-    formatted: bool = True
-    color: ColorType = "blue"
-    theme: str = "dracula"
+    stream: bool | None = None
+    formatted: bool | None = None
+    color: ColorType | None = None
+    theme: str | None = None
 
 
 class Default(BaseModel):
     role: str | None = None
-    options: Options = Options()
-    output: Output = Output()
+    options: Options = Options(api="chatgpt", model="gpt-4-1106-preview", temperature=0.1, top_probability=1.0)
+    output: Output = Output(stream=True, formatted=True, color="blue", theme="dracula")
 
 
 class Role(BaseModel):
     name: str
     description: DescriptionType
     options: Options | None = None
+    output: Output | None = None
+
+
+class BuiltinRole(Role):
     output: Output | None = Field(None, exclude=True)
 
 
-class BuiltinRoleCode(Role):
+class BuiltinRoleCode(BuiltinRole):
     name: BuiltinRoleNameType = "code"
     description: BuiltinDescriptionType = CODE_ROLE
 
 
-class BuiltinRoleShell(Role):
+class BuiltinRoleShell(BuiltinRole):
     name: BuiltinRoleNameType = "shell"
     description: BuiltinDescriptionType = SHELL_ROLE
     default_execute: bool = False
 
 
-class BuiltinRoleDescribeShell(Role):
+class BuiltinRoleDescribeShell(BuiltinRole):
     name: BuiltinRoleNameType = "describe_shell"
     description: BuiltinDescriptionType = DESCRIBE_SHELL_ROLE
 

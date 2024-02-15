@@ -16,13 +16,11 @@ if TYPE_CHECKING:  # pragma: no cover
 
 class YAML(ruamel.yaml.YAML):
     def __init__(self) -> None:
-        super().__init__()
+        super().__init__(typ="safe", pure=True)
         self.indent(mapping=2, sequence=4, offset=2)
         self.width = 100000
         self.default_flow_style = False
         self.allow_unicode = True
-        self.pure = True
-        self.typ = "safe"
 
 
 def yaml_load(stream: Path | StreamTextType) -> Any:

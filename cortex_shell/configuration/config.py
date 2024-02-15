@@ -34,7 +34,7 @@ def _get_default_directory() -> Path:
     return path.resolve()
 
 
-class Config:
+class ConfigurationManager:
     def __init__(self, directory: Path | None = None) -> None:
         self._init_config_directory(directory or _get_default_directory())
         self._load_config()
@@ -114,13 +114,13 @@ class Config:
 _cfg = None
 
 
-def cfg() -> Config:
+def cfg() -> ConfigurationManager:
     global _cfg  # noqa: PLW0603
     if _cfg is None:
-        _cfg = Config()
+        _cfg = ConfigurationManager()
     return _cfg
 
 
-def set_cfg(config: Config) -> None:
+def set_cfg(config: ConfigurationManager) -> None:
     global _cfg  # noqa: PLW0603
     _cfg = config

@@ -97,7 +97,7 @@ class ShellExecutionPostProcessing(IPostProcessing):
         if self._describe_shell_role.output.formatted:
             renderer = FormattedRenderer(self._describe_shell_role)
         else:
-            renderer = PlainRenderer(self._describe_shell_role.output.color)  # type: ignore[arg-type]
+            renderer = PlainRenderer(self._describe_shell_role)
 
         return DefaultHandler(
             client,
