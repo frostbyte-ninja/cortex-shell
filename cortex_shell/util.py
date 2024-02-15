@@ -179,7 +179,15 @@ def is_tty() -> bool:
 
 
 def get_temp_dir() -> Path:
-    return Path(gettempdir())
+    temp_dir = Path(gettempdir()) / C.PROJECT_NAME
+    temp_dir.mkdir(parents=True, exist_ok=True)
+    return temp_dir
+
+
+def get_cache_dir() -> Path:
+    cache_dir = Path.home() / ".cache" / C.PROJECT_NAME
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    return cache_dir
 
 
 def print_formatted_text(*values: str | FormattedText, **kwargs: Any) -> None:

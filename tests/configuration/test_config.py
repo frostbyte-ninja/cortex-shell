@@ -7,7 +7,7 @@ from cortex_shell import constants as C  # noqa: N812
 from cortex_shell.configuration.config import Config, _get_default_directory, cfg
 from cortex_shell.configuration.schema import Configuration
 from cortex_shell.role import CODE_ROLE, DEFAULT_ROLE, DESCRIBE_SHELL_ROLE, SHELL_ROLE
-from cortex_shell.util import get_temp_dir, os_name, shell_name
+from cortex_shell.util import get_cache_dir, get_temp_dir, os_name, shell_name
 
 
 class TestConfig:
@@ -37,13 +37,13 @@ class TestDefaultConfig:
         assert cfg().request_timeout() == 10
 
     def test_chat_history_path(self):
-        assert cfg().chat_history_path() == (Path.home() / ".cache" / C.PROJECT_NAME / "history").resolve()
+        assert cfg().chat_history_path() == (get_cache_dir() / "history").resolve()
 
     def test_chat_history_size(self):
         assert cfg().chat_history_size() == 100
 
     def test_chat_cache_path(self):
-        assert cfg().chat_cache_path() == (get_temp_dir() / C.PROJECT_NAME / "cache").resolve()
+        assert cfg().chat_cache_path() == (get_temp_dir() / "cache").resolve()
 
     def test_chat_cache_size(self):
         assert cfg().chat_cache_size() == 100

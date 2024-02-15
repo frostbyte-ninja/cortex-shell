@@ -7,9 +7,8 @@ from pydantic import AfterValidator, BeforeValidator, ConfigDict, Field
 from pydantic import BaseModel as PydanticBaseModel
 from typing_extensions import Self
 
-from .. import constants as C  # noqa: N812
 from ..role import CODE_ROLE, DESCRIBE_SHELL_ROLE, SHELL_ROLE
-from ..util import fill_values, get_temp_dir
+from ..util import fill_values, get_cache_dir, get_temp_dir
 from .validator import (
     check_api,
     check_color,
@@ -52,9 +51,9 @@ class APIs(BaseModel):
 
 
 class Session(BaseModel):
-    chat_history_path: PathType = Field((Path.home() / ".cache" / C.PROJECT_NAME / "history").resolve())
+    chat_history_path: PathType = Field((get_cache_dir() / "history").resolve())
     chat_history_size: int = Field(100, gt=0)
-    chat_cache_path: PathType = Field((get_temp_dir() / C.PROJECT_NAME / "cache").resolve())
+    chat_cache_path: PathType = Field((get_temp_dir() / "cache").resolve())
     chat_cache_size: int = Field(100, gt=0)
     cache: bool = True
 
