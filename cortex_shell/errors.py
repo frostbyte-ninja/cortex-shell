@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from click import UsageError
 from openai import APIError
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from pydantic import ValidationError
 
 
