@@ -8,7 +8,7 @@ import pydantic
 import ruamel.yaml
 from pydantic import BaseModel
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from pathlib import Path
 
     from ruamel.yaml import StreamTextType, StreamType

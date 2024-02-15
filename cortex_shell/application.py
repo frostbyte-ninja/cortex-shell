@@ -33,7 +33,7 @@ from .renderer.plain_renderer import PlainRenderer
 from .session.chat_session_manager import ChatSessionManager
 from .util import get_stdin, has_stdin, install_shell_integration, is_tty, print_version_callback
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from .configuration.schema import Role
 
 
