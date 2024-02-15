@@ -468,7 +468,8 @@ builtin_roles:
 roles:
   - name: pirate # role id to be used with --role "id"
     description: you are a pirate # the description of your role
-    options: # all default options can be overriden
+    options: # default values can be overriden
+    output: # default values can be overriden
 ```
 
 ## Overriding Config File Parameters with Command-Line Options
