@@ -4,10 +4,11 @@ import pytest
 from pydantic import ValidationError
 
 from cortex_shell import constants as C  # noqa: N812
-from cortex_shell.configuration.config import Config, _get_default_directory, cfg
+from cortex_shell.configuration.config import ConfigurationManager, _get_default_directory, cfg
 from cortex_shell.configuration.schema import Configuration
 from cortex_shell.role import CODE_ROLE, DEFAULT_ROLE, DESCRIBE_SHELL_ROLE, SHELL_ROLE
 from cortex_shell.util import get_cache_dir, get_temp_dir, os_name, shell_name
+from cortex_shell.yaml import yaml_load
 
 
 class TestConfig:
@@ -23,7 +24,58 @@ class TestConfig:
         assert _get_default_directory() == Path.home() / ".config" / "cortex-shell"
 
     def test_config_file(self):
-        assert Config().config_file() == _get_default_directory() / C.CONFIG_FILE
+        assert ConfigurationManager().config_file() == _get_default_directory() / C.CONFIG_FILE
+
+
+class TestDefaultConfigFile:
+    def test_default_config_file(self):
+        config_dict = yaml_load(cfg().config_file())
+        assert config_dict == {
+            "apis": {
+                "chatgpt": {
+                    "api_key": None,
+                    "azure_endpoint": None,
+                },
+            },
+            "misc": {
+                "request_timeout": 10,
+                "session": {
+                    "chat_history_path": str((get_cache_dir() / "history").resolve()),
+                    "chat_history_size": 100,
+                    "chat_cache_path": str((get_temp_dir() / "cache").resolve()),
+                    "chat_cache_size": 100,
+                    "cache": True,
+                },
+            },
+            "default": {
+                "role": None,
+                "options": {
+                    "api": "chatgpt",
+                    "model": "gpt-4-1106-preview",
+                    "temperature": 0.1,
+                    "top_probability": 1.0,
+                },
+                "output": {
+                    "stream": True,
+                    "formatted": True,
+                    "color": "blue",
+                    "theme": "dracula",
+                },
+            },
+            "builtin_roles": {
+                "code": {
+                    "options": None,
+                },
+                "shell": {
+                    "options": None,
+                    "default_execute": False,
+                },
+                "describe_shell": {
+                    "options": None,
+                },
+            },
+            "roles": None,
+        }
 
 
 class TestDefaultConfig:
@@ -194,7 +246,6 @@ class TestInvalidConfig:
         [
             {("apis", "chatgpt", "api_key"): 123},
             {("apis", "chatgpt", "azure_endpoint"): 123},
-            {("apis", "chatgpt", "azure_deployment"): 123},
             {("misc", "request_timeout"): "invalid_timeout"},
             {("misc", "session", "chat_history_path"): 123},
             {("misc", "session", "chat_history_size"): "123"},
@@ -310,6 +361,44 @@ class TestOverrideConfig:
         assert role.options.top_probability == 0.7
         assert role.output.color == "green"
         assert role.output.theme == "abcd"
+
+    def test_custom_role_partly_custom_option(self, configuration_override):
+        custom_role_name = "test_role"
+        custom_role_temperature = 0.8
+        custom_role_color = "red"
+
+        changes = {
+            ("default", "options", "model"): "test123",
+            ("default", "options", "temperature"): 0.5,
+            ("default", "options", "top_probability"): 0.7,
+            ("default", "output", "theme"): "abcd",
+            ("default", "output", "color"): "green",
+            ("roles",): [
+                {
+                    "name": custom_role_name,
+                    "description": "you are a pirate",
+                    "options": {
+                        "temperature": custom_role_temperature,
+                    },
+                    "output": {
+                        "color": custom_role_color,
+                    },
+                },
+            ],
+        }
+        configuration_override(changes)
+        role = cfg().get_role(custom_role_name)
+        default = cfg().get_builtin_role_default()
+
+        assert role.options.api == default.options.api
+        assert role.options.model == default.options.model
+        assert role.options.temperature == custom_role_temperature
+        assert role.options.top_probability == default.options.top_probability
+
+        assert role.output.stream == default.output.stream
+        assert role.output.formatted == default.output.formatted
+        assert role.output.color == custom_role_color
+        assert role.output.theme == default.output.theme
 
     def test_missing_custom_role(self, configuration_override):
         changes = {
