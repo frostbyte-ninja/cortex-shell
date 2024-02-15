@@ -30,7 +30,7 @@ class ApiError(FatalError):
         self.code = None
 
         if isinstance(error, APIError):
-            if error.body:
+            if error.body and isinstance(error.body, dict):
                 message = error.body.get("message", "Unknown")
                 self.code = error.body.get("code", None)
             elif error.message:
