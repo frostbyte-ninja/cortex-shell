@@ -7,21 +7,19 @@
   "schedule": ["every weekend"],
   "packageRules": [
     {
-      "groupName": "all GitHub Actions",
+      "groupName": "GitHub Actions",
       "groupSlug": "github-actions",
-      "matchManagers": ["github-actions"],
-      "matchUpdateTypes": ["major", "minor", "patch"]
+      "matchManagers": ["github-actions"]
     },
     {
-      "groupName": "all non-major pre-commit hooks",
+      "groupName": "pre-commit hooks",
       "groupSlug": "pre-commit",
-      "matchManagers": ["pre-commit"],
-      "matchUpdateTypes": ["minor", "patch"]
+      "matchManagers": ["pre-commit"]
     },
     {
-      "groupName": "all non-major Python dependencies",
+      "groupName": "Python dependencies",
       "groupSlug": "python",
-      "matchManagers": ["pip_requirements", "pipenv", "poetry"],
+      "matchManagers": ["pep621", "poetry"],
       "matchUpdateTypes": ["minor", "patch"]
     }
   ],
