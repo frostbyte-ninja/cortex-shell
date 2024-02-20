@@ -71,4 +71,4 @@ class Cache:
     @classmethod
     @option_callback
     def clear_cache_callback(cls, *_args: Any) -> None:
-        rmtree(cfg().chat_cache_path())
+        rmtree(cfg().config.misc.session.chat_cache_path)

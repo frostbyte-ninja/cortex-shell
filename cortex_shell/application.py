@@ -323,15 +323,15 @@ class Application:
             self._repl = True
 
     def _select_role(self) -> None:
-        self._role_name = self._role_name or cfg().default_role()
+        self._role_name = self._role_name or cfg().config.default.role
 
         self._role: Role
         if self._code:
-            self._role = cfg().get_builtin_role_code()
+            self._role = cfg().config.builtin_roles.code
         elif self._describe_shell:
-            self._role = cfg().get_builtin_role_describe_shell()
+            self._role = cfg().config.builtin_roles.describe_shell
         elif self._shell:
-            self._role = cfg().get_builtin_role_shell()
+            self._role = cfg().config.builtin_roles.shell
         elif self._role_name:
             if role := cfg().get_role(self._role_name):
                 self._role = role
@@ -351,7 +351,7 @@ class Application:
         renderer = self._get_renderer()
         handler = self._get_handler(client, processing, renderer)
 
-        cache = self._cache if self._cache is not None else cfg().cache()
+        cache = self._cache if self._cache is not None else cfg().config.misc.session.cache
 
         try:
             handler.handle(
@@ -369,7 +369,10 @@ class Application:
 
     def _get_history(self) -> IHistory:
         if self._chat_id:
-            session_manager = ChatSessionManager(cfg().chat_history_path(), cfg().chat_history_size())
+            session_manager = ChatSessionManager(
+                cfg().config.misc.session.chat_history_path,
+                cfg().config.misc.session.chat_history_size,
+            )
             return PersistentHistory(self._chat_id, session_manager)
         else:
             return VolatileHistory()
@@ -377,8 +380,8 @@ class Application:
     def _get_post_processing(self, client: IClient) -> IPostProcessing:
         if self._shell:
             return ShellExecutionPostProcessing(
-                cfg().get_builtin_role_shell(),
-                cfg().get_builtin_role_describe_shell(),
+                cfg().config.builtin_roles.shell,
+                cfg().config.builtin_roles.describe_shell,
                 client,
             )
         elif self._output_file:
@@ -401,11 +404,11 @@ class Application:
     def _get_client(self) -> IClient:
         api = self._role.options.api
         if api == "chatgpt":
-            if api_key := cfg().chat_gpt().api_key:
+            if api_key := cfg().config.apis.chatgpt.api_key:
                 return ChatGptClient(
                     api_key,
-                    cfg().request_timeout(),
-                    cfg().chat_gpt().azure_endpoint,
+                    cfg().config.misc.request_timeout,
+                    cfg().config.apis.chatgpt.azure_endpoint,
                 )
             else:
                 raise ClickException(f"No OpenAI API key, check {cfg().config_file()}")

@@ -10,13 +10,7 @@ from ..errors import InvalidConfigError
 from ..role import DEFAULT_ROLE
 from ..yaml import from_yaml_file, to_yaml_file
 from .schema import (
-    BuiltinRoleCode,
-    BuiltinRoleDescribeShell,
-    BuiltinRoleShell,
-    ChatGPT,
     Configuration,
-    Options,
-    Output,
     Role,
 )
 
@@ -50,7 +44,7 @@ class ConfigurationManager:
             to_yaml_file(config_file, Configuration())
 
         try:
-            self.model = from_yaml_file(Configuration, config_file).populate_roles()
+            self.config = from_yaml_file(Configuration, config_file).populate_roles()
         except ValidationError as e:
             raise InvalidConfigError(e) from None
 
@@ -60,55 +54,16 @@ class ConfigurationManager:
     def config_file(self) -> Path:
         return self._directory / C.CONFIG_FILE
 
-    def chat_gpt(self) -> ChatGPT | None:
-        return self.model.apis.chatgpt
-
-    def request_timeout(self) -> int:
-        return self.model.misc.request_timeout
-
-    def chat_history_path(self) -> Path:
-        return self.model.misc.session.chat_history_path
-
-    def chat_history_size(self) -> int:
-        return self.model.misc.session.chat_history_size
-
-    def chat_cache_path(self) -> Path:
-        return self.model.misc.session.chat_cache_path
-
-    def chat_cache_size(self) -> int:
-        return self.model.misc.session.chat_cache_size
-
-    def cache(self) -> bool:
-        return self.model.misc.session.cache
-
-    def default_role(self) -> str | None:
-        return self.model.default.role
-
-    def default_options(self) -> Options:
-        return self.model.default.options
-
-    def default_output(self) -> Output:
-        return self.model.default.output
-
     def get_builtin_role_default(self) -> Role:
         return Role(
             name="default",
             description=DEFAULT_ROLE,
-            options=self.default_options(),
-            output=self.default_output(),
+            options=self.config.default.options,
+            output=self.config.default.output,
         )
 
-    def get_builtin_role_code(self) -> BuiltinRoleCode:
-        return self.model.builtin_roles.code
-
-    def get_builtin_role_shell(self) -> BuiltinRoleShell:
-        return self.model.builtin_roles.shell
-
-    def get_builtin_role_describe_shell(self) -> BuiltinRoleDescribeShell:
-        return self.model.builtin_roles.describe_shell
-
     def get_role(self, role_id: str) -> Role | None:
-        return next((role for role in self.model.roles if role.name == role_id), None)
+        return next((role for role in self.config.roles if role.name == role_id), None)
 
 
 _cfg = None
