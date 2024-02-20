@@ -11,7 +11,7 @@ from pydantic import BaseModel
 if TYPE_CHECKING:  # pragma: no cover
     from pathlib import Path
 
-    from ruamel.yaml import StreamTextType, StreamType
+    from ruamel.yaml import ScalarNode, StreamTextType, StreamType
 
 
 class YAML(ruamel.yaml.YAML):
@@ -21,6 +21,11 @@ class YAML(ruamel.yaml.YAML):
         self.width = 100000
         self.default_flow_style = False
         self.allow_unicode = True
+
+        self.representer.add_representer(type(None), self._represent_none)
+
+    def _represent_none(self, representer: Any, data: Any) -> ScalarNode:
+        return self.representer.represent_scalar("tag:yaml.org,2002:null", "")
 
 
 def yaml_load(stream: Path | StreamTextType) -> Any:
