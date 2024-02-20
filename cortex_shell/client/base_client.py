@@ -9,7 +9,7 @@ from .iclient import IClient
 
 class BaseClient(IClient):
     def __init__(self) -> None:
-        self._cache = Cache(cfg().chat_cache_size(), cfg().chat_cache_path())
+        self._cache = Cache(cfg().config.misc.session.chat_cache_size, cfg().config.misc.session.chat_cache_path)
 
     def get_completion(
         self,

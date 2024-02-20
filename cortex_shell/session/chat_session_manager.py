@@ -102,4 +102,4 @@ class ChatSessionManager:
 
     @staticmethod
     def _get_manager() -> ChatSessionManager:
-        return ChatSessionManager(cfg().chat_history_path())
+        return ChatSessionManager(cfg().config.misc.session.chat_history_path)

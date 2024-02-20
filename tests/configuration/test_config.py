@@ -80,34 +80,34 @@ class TestDefaultConfigFile:
 
 class TestDefaultConfig:
     def test_chat_gpt_api_key(self):
-        assert cfg().chat_gpt().api_key is None
+        assert cfg().config.apis.chatgpt.api_key is None
 
     def test_azure_endpoint(self):
-        assert cfg().chat_gpt().azure_endpoint is None
+        assert cfg().config.apis.chatgpt.azure_endpoint is None
 
     def test_request_timeout(self):
-        assert cfg().request_timeout() == 10
+        assert cfg().config.misc.request_timeout == 10
 
     def test_chat_history_path(self):
-        assert cfg().chat_history_path() == (get_cache_dir() / "history").resolve()
+        assert cfg().config.misc.session.chat_history_path == (get_cache_dir() / "history").resolve()
 
     def test_chat_history_size(self):
-        assert cfg().chat_history_size() == 100
+        assert cfg().config.misc.session.chat_history_size == 100
 
     def test_chat_cache_path(self):
-        assert cfg().chat_cache_path() == (get_temp_dir() / "cache").resolve()
+        assert cfg().config.misc.session.chat_cache_path == (get_temp_dir() / "cache").resolve()
 
     def test_chat_cache_size(self):
-        assert cfg().chat_cache_size() == 100
+        assert cfg().config.misc.session.chat_cache_size == 100
 
     def test_cache(self):
-        assert cfg().cache()
+        assert cfg().config.misc.session.cache is True
 
     def test_default_role(self):
-        assert cfg().default_role() is None
+        assert cfg().config.default.role is None
 
     def test_default_options(self):
-        options = cfg().default_options()
+        options = cfg().config.default.options
 
         assert options.api == "chatgpt"
         assert options.model == "gpt-4-1106-preview"
@@ -115,47 +115,47 @@ class TestDefaultConfig:
         assert options.top_probability == 1.0
 
     def test_default_output(self):
-        options = cfg().default_output()
+        output = cfg().config.default.output
 
-        assert options.stream
-        assert options.formatted
-        assert options.color == "blue"
-        assert options.theme == "dracula"
+        assert output.stream
+        assert output.formatted
+        assert output.color == "blue"
+        assert output.theme == "dracula"
 
     def test_get_builtin_role_default(self):
         role = cfg().get_builtin_role_default()
         assert role.name == "default"
         assert role.description == DEFAULT_ROLE.format(shell=shell_name(), os=os_name())
-        assert role.options == cfg().default_options()
-        assert role.output == cfg().default_output()
+        assert role.options == cfg().config.default.options
+        assert role.output == cfg().config.default.output
 
     def test_get_builtin_role_code(self):
-        role = cfg().get_builtin_role_code()
+        role = cfg().config.builtin_roles.code
         assert role.name == "code"
         assert role.description == CODE_ROLE.format(shell=shell_name(), os=os_name())
-        assert role.options == cfg().default_options()
-        output = cfg().default_output()
+        assert role.options == cfg().config.default.options
+        output = cfg().config.default.output
         output.formatted = False
         assert role.output == output
 
     def test_get_builtin_role_shell(self):
-        role = cfg().get_builtin_role_shell()
+        role = cfg().config.builtin_roles.shell
         assert role.name == "shell"
         assert role.description == SHELL_ROLE.format(shell=shell_name(), os=os_name())
-        assert role.options == cfg().default_options()
-        output = cfg().default_output()
+        assert role.options == cfg().config.default.options
+        output = cfg().config.default.output
         output.formatted = False
         assert role.output == output
 
     def test_get_builtin_role_describe_shell(self):
-        role = cfg().get_builtin_role_describe_shell()
+        role = cfg().config.builtin_roles.describe_shell
         assert role.name == "describe_shell"
         assert role.description == DESCRIBE_SHELL_ROLE.format(shell=shell_name(), os=os_name())
-        assert role.options == cfg().default_options()
-        assert role.output == cfg().default_output()
+        assert role.options == cfg().config.default.options
+        assert role.output == cfg().config.default.output
 
     def test_get_role(self):
-        assert not cfg().model.roles
+        assert not cfg().config.roles
 
 
 class TestModifiedConfig:
@@ -163,55 +163,55 @@ class TestModifiedConfig:
         api_key = "12345678"
         changes = {("apis", "chatgpt", "api_key"): api_key}
         configuration_override(changes)
-        assert cfg().chat_gpt().api_key == api_key
+        assert cfg().config.apis.chatgpt.api_key == api_key
 
     def test_azure_endpoint(self, configuration_override):
         endpoint = "https://example.com"
         changes = {("apis", "chatgpt", "azure_endpoint"): endpoint}
         configuration_override(changes)
-        assert cfg().chat_gpt().azure_endpoint == endpoint
+        assert cfg().config.apis.chatgpt.azure_endpoint == endpoint
 
     def test_request_timeout(self, configuration_override):
         timeout = 15
         changes = {("misc", "request_timeout"): timeout}
         configuration_override(changes)
-        assert cfg().request_timeout() == timeout
+        assert cfg().config.misc.request_timeout == timeout
 
     def test_chat_history_path(self, configuration_override):
         path = "/tmp/test_history_path"
         changes = {("misc", "session", "chat_history_path"): path}
         configuration_override(changes)
-        assert cfg().chat_history_path() == Path(path)
+        assert cfg().config.misc.session.chat_history_path == Path(path)
 
     def test_chat_history_size(self, configuration_override):
         size = 200
         changes = {("misc", "session", "chat_history_size"): size}
         configuration_override(changes)
-        assert cfg().chat_history_size() == size
+        assert cfg().config.misc.session.chat_history_size == size
 
     def test_chat_cache_path(self, configuration_override):
         path = "/tmp/test_cache_path"
         changes = {("misc", "session", "chat_cache_path"): path}
         configuration_override(changes)
-        assert cfg().chat_cache_path() == Path(path)
+        assert cfg().config.misc.session.chat_cache_path == Path(path)
 
     def test_chat_cache_size(self, configuration_override):
         size = 200
         changes = {("misc", "session", "chat_cache_size"): size}
         configuration_override(changes)
-        assert cfg().chat_cache_size() == size
+        assert cfg().config.misc.session.chat_cache_size == size
 
     def test_cache(self, configuration_override):
         cache = False
         changes = {("misc", "session", "cache"): cache}
         configuration_override(changes)
-        assert cfg().cache() == cache
+        assert cfg().config.misc.session.cache == cache
 
     def test_default_role(self, configuration_override):
         role = "test_role"
         changes = {("default", "role"): role}
         configuration_override(changes)
-        assert cfg().default_role() == role
+        assert cfg().config.default.role == role
 
     def test_default_options(self, configuration_override):
         changes = {
@@ -220,7 +220,7 @@ class TestModifiedConfig:
             ("default", "options", "top_probability"): 0.9,
         }
         configuration_override(changes)
-        options = cfg().default_options()
+        options = cfg().config.default.options
         assert options.model == "test_model"
         assert options.temperature == 0.5
         assert options.top_probability == 0.9
@@ -233,7 +233,7 @@ class TestModifiedConfig:
             ("default", "output", "theme"): "test_theme",
         }
         configuration_override(changes)
-        output = cfg().default_output()
+        output = cfg().config.default.output
         assert output.stream is False
         assert output.formatted is False
         assert output.color == "red"
@@ -335,7 +335,7 @@ class TestOverrideConfig:
             ("roles",): [{"name": role_name, "description": role_description}],
         }
         configuration_override(changes)
-        assert cfg().default_role() == role_name
+        assert cfg().config.default.role == role_name
         role = cfg().get_role(role_name)
         assert role is not None
         assert role.name == role_name
@@ -415,11 +415,7 @@ class TestOverrideConfig:
         }
         configuration_override(changes, Configuration())
 
-        for role in (
-            cfg().get_builtin_role_code(),
-            cfg().get_builtin_role_shell(),
-            cfg().get_builtin_role_describe_shell(),
-        ):
+        for role in cfg().config.builtin_roles.__dict__.values():
             assert role.options.model == "test123"
             assert role.options.temperature == 0.5
             assert role.options.top_probability == 0.7
