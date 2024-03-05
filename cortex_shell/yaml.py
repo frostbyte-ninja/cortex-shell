@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from io import StringIO
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, TypeVar
 
 import pydantic
@@ -9,8 +10,6 @@ import ruamel.yaml
 from pydantic import BaseModel
 
 if TYPE_CHECKING:  # pragma: no cover
-    from pathlib import Path
-
     from ruamel.yaml import ScalarNode, StreamTextType, StreamType
 
 
@@ -31,11 +30,19 @@ class YAML(ruamel.yaml.YAML):
 
 
 def yaml_load(stream: Path | StreamTextType) -> Any:
-    return YAML().load(stream)
+    if isinstance(stream, Path):
+        with stream.open("r", encoding="utf-8") as file:
+            return YAML().load(file)
+    else:
+        return YAML().load(stream)
 
 
 def yaml_dump(data: Path | StreamType, stream: Any = None, *, transform: Any = None) -> Any:
-    return YAML().dump(data=data, stream=stream, transform=transform)
+    if isinstance(stream, Path):
+        with stream.open("w", encoding="utf-8") as file:
+            YAML().dump(data=data, stream=file, transform=transform)
+    else:
+        YAML().dump(data=data, stream=stream, transform=transform)
 
 
 def yaml_dump_str(data: Path | StreamType, *, transform: Any = None) -> Any:
