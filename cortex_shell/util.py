@@ -4,7 +4,6 @@ import contextlib
 import errno
 import os
 import platform
-import re
 import shutil
 import stat
 import subprocess
@@ -14,16 +13,16 @@ from copy import deepcopy
 from importlib import resources
 from pathlib import Path
 from tempfile import gettempdir
-from typing import Any, Callable
+from typing import Any, Callable, cast
 
 import click.exceptions
 import distro
-import psutil
 import typer
 from pathvalidate import is_valid_filepath
 from prompt_toolkit import print_formatted_text as print_formatted_text_orig
 from prompt_toolkit.formatted_text import FormattedText
 from pydantic import BaseModel
+from shellingham import ShellDetectionFailure, detect_shell
 
 from . import constants as C  # noqa: N812
 
@@ -51,8 +50,11 @@ def print_version_callback(*_args: Any) -> None:
     typer.echo(f"v{C.VERSION}")
 
 
-def get_powershell_profile_path() -> Path | None:
-    command = 'powershell -NoProfile -Command "$PROFILE"'
+def get_powershell_profile_path(shell: str) -> Path | None:
+    if shell not in {"powershell", "pwsh"}:
+        raise ValueError(f'"{shell}" shell is not supported.')
+
+    command = f'{shell} -NoProfile -Command "$PROFILE"'
     result = subprocess.run(command, capture_output=True, text=True, check=False)
     path = result.stdout.strip()
 
@@ -81,9 +83,11 @@ def install_shell_integration(*_args: Any) -> None:
         shell_config_path = Path.home() / ".config" / "fish" / "config.fish"
         shell_config_path.parent.mkdir(parents=True, exist_ok=True)
     elif shell == "powershell":
-        shell_config_path = get_powershell_profile_path()
+        shell_config_path = get_powershell_profile_path("powershell")
+    elif shell == "pwsh":
+        shell_config_path = get_powershell_profile_path("pwsh")
     else:
-        typer.echo(f'"{shell}" is not supported.')
+        typer.echo(f'"{shell}" shell is not supported.')
         return
 
     if not shell_config_path:
@@ -129,19 +133,9 @@ def os_name() -> str:
 
 
 def shell_name() -> str | None:
-    def name_transform(process_path: str) -> str:
-        process_name = Path(process_path).stem
-        is_powershell = re.fullmatch("pwsh|pwsh.exe|powershell.exe", process_name)
-        return "powershell" if is_powershell else process_name
-
     try:
-        process = psutil.Process(os.getppid())
-        while any(name in process.name().lower() for name in ("python", C.PROJECT_NAME, C.PROJECT_NAME_SHORT)):
-            process = process.parent()
-
-        return name_transform(process.name())
-
-    except Exception:
+        return cast(str, detect_shell()[0])
+    except ShellDetectionFailure:
         return None
 
 
@@ -153,10 +147,14 @@ def run_command(command: str) -> None:
     """
     shell = shell_name()
 
+    if shell is None:
+        raise ValueError("Unsupported shell")
     if shell == "powershell":
-        full_command = ["powershell.exe", "-Command", f'"{command}"']
+        full_command = ["powershell", "-Command", f'"{command}"']
+    elif shell == "pwsh":
+        full_command = ["pwsh", "-Command", f'"{command}"']
     elif shell == "cmd":
-        full_command = ["cmd.exe", "/c", f'"{command}"']
+        full_command = ["cmd", "/c", f'"{command}"']
     elif shell in {"bash", "zsh", "sh", "ksh", "fish", "dash", "ash", "csh", "tcsh"}:
         full_command = [shell, "-c", command]
     else:
