@@ -41,7 +41,7 @@ ruamel-yaml = "^0.18.5"
 shellingham = "^1.5.0"
 typer = "^0.12.0"
 typing-extensions = "^4.9.0"
-validators = "^0.27.0"
+validators = "^0.28.0"
 
 [tool.poetry.group.test.dependencies]
 coverage = "^7.4"
