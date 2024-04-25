@@ -26,8 +26,8 @@ class FileProcessing(IProcessing):
     ) -> None:
         self._role = role
         self._files = files
-        self._history = history if history else VolatileHistory()
-        self._post_processing = post_processing if post_processing else NoPostProcessing()
+        self._history = history or VolatileHistory()
+        self._post_processing = post_processing or NoPostProcessing()
         self._files_added_to_history = False
 
     def get_messages(self, prompt: str) -> list[Message]:
