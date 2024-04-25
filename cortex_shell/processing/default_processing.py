@@ -21,8 +21,8 @@ class DefaultProcessing(IProcessing):
         post_processing: IPostProcessing | None = None,
     ) -> None:
         self._role = role
-        self._history = history if history else VolatileHistory()
-        self._post_processing = post_processing if post_processing else NoPostProcessing()
+        self._history = history or VolatileHistory()
+        self._post_processing = post_processing or NoPostProcessing()
 
     def get_messages(self, prompt: str) -> list[Message]:
         messages = self._history.messages()
