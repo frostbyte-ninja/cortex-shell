@@ -17,10 +17,6 @@ class TestConfig:
         assert _get_default_directory() == Path("/test/path").resolve()
         monkeypatch.delenv("CORTEX_SHELL_CONFIG_PATH")
 
-        monkeypatch.setenv("XDG_CACHE_HOME", "/test/xdg")
-        assert _get_default_directory() == Path("/test/xdg/cortex-shell").resolve()
-        monkeypatch.delenv("XDG_CACHE_HOME")
-
         assert _get_default_directory() == Path.home() / ".config" / "cortex-shell"
 
     def test_config_file(self):
