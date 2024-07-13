@@ -91,9 +91,9 @@ class ErrorHandler:
         ErrorHandler._write_line_b(s.encode() if s is not None else s, **kwargs)
 
     @staticmethod
-    def _force_bytes(exc: Any) -> bytes:
+    def _force_bytes(obj: Any) -> bytes:  # noqa: ANN401
         with contextlib.suppress(TypeError):
-            return bytes(exc)
+            return bytes(obj)
         with contextlib.suppress(Exception):
-            return str(exc).encode()
-        return f"<unprintable {type(exc).__name__} object>".encode()
+            return str(obj).encode()
+        return f"<unprintable {type(obj).__name__} object>".encode()

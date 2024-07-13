@@ -31,7 +31,12 @@ class Option(Enum):
 
 
 class ShellExecutionPostProcessing(IPostProcessing):
-    def __init__(self, shell_role: BuiltinRoleShell, describe_shell_role: BuiltinRoleDescribeShell, client: IClient):
+    def __init__(
+        self,
+        shell_role: BuiltinRoleShell,
+        describe_shell_role: BuiltinRoleDescribeShell,
+        client: IClient,
+    ) -> None:
         self._shell_role = shell_role
         self._describe_shell_role = describe_shell_role
         self._handler = self._get_shell_describe_handler(client)

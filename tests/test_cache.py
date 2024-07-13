@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 
 from cortex_shell.cache import Cache
@@ -49,10 +51,10 @@ class TestCache:
         assert mock_function.call_count == 3
         assert result == "result"
 
-    def test_multiple_requests(self, cache, cache_path):
+    def test_multiple_requests(self, cache: Cache, cache_path):
         @cache
-        def function(*_args, **kwargs):
-            return ""
+        def function(*_args: Any, **_kwargs: Any):
+            yield ""
 
         drain_generator(function(caching=True, messages=[]))
         drain_generator(function(caching=True, param1=None, messages=[]))
@@ -63,10 +65,10 @@ class TestCache:
         cached_files = list(cache_path.glob("*"))
         assert len(cached_files) == 5
 
-    def test_cache_limit(self, cache, cache_path):
+    def test_cache_limit(self, cache: Cache, cache_path):
         @cache
-        def function(*_args, **kwargs):
-            return ""
+        def function(*_args: Any, **_kwargs: Any):
+            yield ""
 
         drain_generator(function(caching=True, messages=[]))
         drain_generator(function(caching=True, param1=None, messages=[]))

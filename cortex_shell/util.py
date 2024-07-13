@@ -13,11 +13,12 @@ from copy import deepcopy
 from importlib import resources
 from pathlib import Path
 from tempfile import gettempdir
-from typing import Any, Callable, cast
+from typing import Any, Callable, Union, cast
 
 import click.exceptions
 import distro
 import typer
+from click import Context
 from pathvalidate import is_valid_filepath
 from prompt_toolkit import print_formatted_text as print_formatted_text_orig
 from prompt_toolkit.formatted_text import FormattedText
@@ -26,12 +27,16 @@ from shellingham import ShellDetectionFailure, detect_shell
 
 from . import constants as C  # noqa: N812
 
+_TypeOrContext = Union[type, Context]
 
-def option_callback(func: Callable[[Any, str], Any]) -> Callable[[Any, str], Any]:
-    def wrapper(cls: Any, value: str) -> None:
+
+def option_callback(
+    func: Callable[[_TypeOrContext, Any], None],
+) -> Callable[[_TypeOrContext, Any], None]:
+    def wrapper(cls_or_ctx: _TypeOrContext, value: Any) -> None:  # noqa: ANN401
         if not value:
             return
-        func(cls, value)
+        func(cls_or_ctx, value)
         raise typer.Exit
 
     return wrapper
@@ -189,22 +194,13 @@ def get_cache_dir() -> Path:
 
 
 def print_formatted_text(*values: str | FormattedText, **kwargs: Any) -> None:
-    # workaround for NoConsoleScreenBufferError
     if is_tty():
         print_formatted_text_orig(*values, **kwargs)
     else:
-
-        def to_text(val: Any) -> str:
-            if isinstance(val, str):
-                return val
-            elif isinstance(val, list):
-                return "".join([v[1] for v in val])
-            else:
-                raise TypeError
-
-        end = kwargs.get("end", "\n")
-        sep = kwargs.get("sep", " ")
-        print(sep.join([to_text(value) for value in values]), end=end)
+        print(
+            *(text if isinstance(text, str) else "".join(segment[1] for segment in text) for text in values),
+            **kwargs,
+        )
 
 
 def rmtree(path: Path) -> None:

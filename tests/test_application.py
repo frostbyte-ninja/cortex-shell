@@ -128,3 +128,14 @@ class TestConfig:
         result = CliRunner().invoke(app, "prompt_input")
 
         assert result.exit_code == 1
+
+
+class TestVersion:
+    def test_version(self):
+        app = typer.Typer()
+        app.command()(Application)
+
+        result = CliRunner().invoke(app, "--version")
+
+        assert result.output == f"v{C.VERSION}\n"
+        assert result.exit_code == 0

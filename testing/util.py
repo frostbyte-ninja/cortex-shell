@@ -6,21 +6,18 @@ import shutil
 import sys
 from importlib import resources
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import pytest
 
 if TYPE_CHECKING:  # pragma: no cover
     from collections.abc import MutableMapping
 
-
 ignore_if_windows = pytest.mark.skipif(sys.platform == "win32", reason="windows")
 
 
-def all_combinations(*input_values):
-    return [
-        subset for length in range(1, len(input_values) + 1) for subset in itertools.combinations(input_values, length)
-    ]
+def all_combinations(*args: Any) -> list[tuple[Any, ...]]:
+    return [subset for length in range(1, len(args) + 1) for subset in itertools.combinations(args, length)]
 
 
 def get_test_resource_file(resource_name: str, submodule: str = "", relative: bool = True) -> Path:

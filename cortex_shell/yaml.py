@@ -10,7 +10,7 @@ import ruamel.yaml
 from pydantic import BaseModel
 
 if TYPE_CHECKING:  # pragma: no cover
-    from ruamel.yaml import ScalarNode, StreamTextType, StreamType
+    from ruamel.yaml import BaseRepresenter, ScalarNode, StreamTextType, StreamType
 
 
 class YAML(ruamel.yaml.YAML):
@@ -25,11 +25,11 @@ class YAML(ruamel.yaml.YAML):
         self.representer.add_representer(type(None), self._represent_none)
 
     @staticmethod
-    def _represent_none(representer: Any, data: Any) -> ScalarNode:
+    def _represent_none(representer: BaseRepresenter, _data: Any) -> ScalarNode:  # noqa: ANN401
         return representer.represent_scalar("tag:yaml.org,2002:null", "")
 
 
-def yaml_load(stream: Path | StreamTextType) -> Any:
+def yaml_load(stream: Path | StreamTextType) -> Any:  # noqa: ANN401
     if isinstance(stream, Path):
         with stream.open("r", encoding="utf-8") as file:
             return YAML().load(file)
@@ -37,29 +37,29 @@ def yaml_load(stream: Path | StreamTextType) -> Any:
         return YAML().load(stream)
 
 
-def yaml_dump(data: Path | StreamType, stream: Any = None, *, transform: Any = None) -> Any:
+def yaml_dump(data: Path | StreamType, stream: Any = None, *, transform: Any = None) -> Any:  # noqa: ANN401
     if isinstance(stream, Path):
         with stream.open("w", encoding="utf-8") as file:
-            YAML().dump(data=data, stream=file, transform=transform)
+            return YAML().dump(data=data, stream=file, transform=transform)
     else:
-        YAML().dump(data=data, stream=stream, transform=transform)
+        return YAML().dump(data=data, stream=stream, transform=transform)
 
 
-def yaml_dump_str(data: Path | StreamType, *, transform: Any = None) -> Any:
+def yaml_dump_str(data: Path | StreamType, *, transform: Any = None) -> str:  # noqa: ANN401
     stream = StringIO()
     yaml_dump(data=data, stream=stream, transform=transform)
     return stream.getvalue()
 
 
-T = TypeVar("T", bound=BaseModel)
+_T = TypeVar("_T", bound=BaseModel)
 
 
-def from_yaml_file(model_type: type[T], file: Path) -> T:
+def from_yaml_file(model_type: type[_T], file: Path) -> _T:
     return pydantic.TypeAdapter(model_type).validate_python(yaml_load(file.resolve()))
 
 
 def to_yaml_file(
     file: Path,
-    model: BaseModel | Any,
+    model: BaseModel,
 ) -> None:
     yaml_dump(json.loads(model.model_dump_json()), file.resolve())

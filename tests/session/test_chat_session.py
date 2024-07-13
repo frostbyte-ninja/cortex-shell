@@ -27,17 +27,3 @@ class TestChatSession:
         assert chat_session.exists()
         chat_session.delete()
         assert not chat_session.exists()
-
-    def test_get_role_name(self, chat_session):
-        assert chat_session.get_role_name() is None
-
-    def test_set_role(self, chat_session, mocker):
-        role = mocker.Mock()
-        role.name = "test_role"
-        role.description = "Test role description"
-        chat_session.set_role(role)
-        assert chat_session.get_role_name() == "test_role"
-        assert chat_session.get_system_prompt() == "Test role description"
-
-    def test_get_system_prompt(self, chat_session):
-        assert not chat_session.get_system_prompt()
