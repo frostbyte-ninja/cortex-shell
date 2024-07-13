@@ -4,7 +4,7 @@ from cortex_shell import constants as C  # noqa: N812
 from cortex_shell.renderer.formatted_renderer import FormattedRenderer
 
 
-@pytest.fixture()
+@pytest.fixture
 def formatted_renderer(mock_role):
     return FormattedRenderer(mock_role)
 

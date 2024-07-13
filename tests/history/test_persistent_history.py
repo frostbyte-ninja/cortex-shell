@@ -5,7 +5,7 @@ from cortex_shell.history.persistent_history import PersistentHistory
 from cortex_shell.types import Message
 
 
-@pytest.fixture()
+@pytest.fixture
 def persistent_history(mock_chat_session_manager, tmp_dir_factory):
     return PersistentHistory("test_chat_id", mock_chat_session_manager)
 

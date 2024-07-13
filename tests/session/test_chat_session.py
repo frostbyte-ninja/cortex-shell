@@ -4,7 +4,7 @@ from cortex_shell.session.chat_session_manager import ChatSession
 from cortex_shell.types import Message
 
 
-@pytest.fixture()
+@pytest.fixture
 def chat_session(tmp_dir_factory):
     return ChatSession(file_path=tmp_dir_factory.get() / "test.yaml", size=10)
 

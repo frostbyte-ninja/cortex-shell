@@ -4,7 +4,7 @@ from cortex_shell import constants as C  # noqa: N812
 from cortex_shell.renderer.plain_renderer import PlainRenderer
 
 
-@pytest.fixture()
+@pytest.fixture
 def plain_renderer(mock_role):
     return PlainRenderer(mock_role)
 

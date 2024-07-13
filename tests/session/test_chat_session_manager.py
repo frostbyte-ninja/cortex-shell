@@ -8,7 +8,7 @@ from cortex_shell.session.chat_session_manager import ChatSessionManager
 from cortex_shell.types import Message
 
 
-@pytest.fixture()
+@pytest.fixture
 def chat_session_manager(tmp_dir_factory):
     temp_dir = tmp_dir_factory.get() / "some_dir"
     assert not temp_dir.exists()

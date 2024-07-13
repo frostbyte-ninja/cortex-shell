@@ -4,7 +4,7 @@ from cortex_shell.history.volatile_history import VolatileHistory
 from cortex_shell.types import Message
 
 
-@pytest.fixture()
+@pytest.fixture
 def volatile_history():
     return VolatileHistory()
 

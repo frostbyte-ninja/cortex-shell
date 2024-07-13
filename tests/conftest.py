@@ -35,7 +35,7 @@ def _mock_configuration(tmp_dir_factory, monkeypatch):
     set_cfg(ConfigurationManager())
 
 
-@pytest.fixture()
+@pytest.fixture
 def configuration_override(_mock_configuration):
     def _apply_config_changes(config_changes, config_instance=None):
         config = config_instance if config_instance is not None else cfg().config
@@ -54,14 +54,14 @@ def configuration_override(_mock_configuration):
     return _apply_config_changes
 
 
-@pytest.fixture()
+@pytest.fixture
 def _no_stdin(mocker):
     for module_name, module in sys.modules.items():
         if hasattr(module, "has_stdin"):
             mocker.patch(f"{module_name}.has_stdin", return_value=False)
 
 
-@pytest.fixture()
+@pytest.fixture
 def _stdin(mocker):
     for module_name, module in sys.modules.items():
         if hasattr(module, "has_stdin"):
@@ -70,7 +70,7 @@ def _stdin(mocker):
             mocker.patch(f"{module_name}.get_stdin", return_value="Some Text")
 
 
-@pytest.fixture()
+@pytest.fixture
 def tmp_dir_factory(tmp_path):
     class TmpDirFactory:
         def __init__(self) -> None:
@@ -85,7 +85,7 @@ def tmp_dir_factory(tmp_path):
     return TmpDirFactory()
 
 
-@pytest.fixture()
+@pytest.fixture
 def tmp_file_factory(tmp_path):
     class TmpFileFactory:
         def __init__(self) -> None:
@@ -100,14 +100,14 @@ def tmp_file_factory(tmp_path):
     return TmpFileFactory()
 
 
-@pytest.fixture()
+@pytest.fixture
 def mock_role():
     options = Options(api="chatgpt", model="test_model1", temperature=0.5, top_probability=0.7)
     output = Output(stream=True, formatted=False, color="blue", theme="dark")
     return Role(name="role1", description="description1", options=options, output=output)
 
 
-@pytest.fixture()
+@pytest.fixture
 def mock_shell_role():
     options = Options(api="chatgpt", model="test_model2", temperature=0.8, top_probability=0.9)
     output = Output(stream=False, formatted=True, color="red", theme="green")
@@ -120,7 +120,7 @@ def mock_shell_role():
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def mock_shell_integration(mocker):
     def _install(shell: str) -> None:
         mocker.patch(f"{C.PROJECT_MODULE}.util.shell_name", return_value=shell)
@@ -130,7 +130,7 @@ def mock_shell_integration(mocker):
     return _install
 
 
-@pytest.fixture()
+@pytest.fixture
 def mock_executable(tmp_dir_factory):
     path = tmp_dir_factory.get() / C.PROJECT_NAME
     with path.open("w", encoding="utf-8") as file:
@@ -140,38 +140,38 @@ def mock_executable(tmp_dir_factory):
     return path
 
 
-@pytest.fixture()
+@pytest.fixture
 def mock_client(mocker):
     return mocker.MagicMock(spec=IClient)
 
 
-@pytest.fixture()
+@pytest.fixture
 def mock_processing(mocker):
     return mocker.MagicMock(spec=IProcessing)
 
 
-@pytest.fixture()
+@pytest.fixture
 def mock_renderer(mocker):
     return mocker.MagicMock(spec=IRenderer)
 
 
-@pytest.fixture()
+@pytest.fixture
 def mock_chat_session(mocker):
     return mocker.MagicMock(spec=ChatSession)
 
 
-@pytest.fixture()
+@pytest.fixture
 def mock_chat_session_manager(mocker, mock_chat_session):
     manager = mocker.MagicMock(spec=ChatSessionManager)
     manager.get_session.return_value = mock_chat_session
     return manager
 
 
-@pytest.fixture()
+@pytest.fixture
 def mock_history(mocker):
     return mocker.MagicMock(spec=IHistory)
 
 
-@pytest.fixture()
+@pytest.fixture
 def mock_post_processing(mocker):
     return mocker.MagicMock(spec=IPostProcessing)
