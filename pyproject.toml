@@ -67,26 +67,39 @@ line-length = 120
 target-version = "py39"
 
 [tool.ruff.lint]
-
 select = [
   "A",
+  "AIR",
+  "ANN",
+  "ARG",
+  "ASYNC",
   "B",
+  "BLE",
+  "C",
   "C4",
   "C90",
   "COM",
+  "DJ",
   "DTZ",
   "E",
+  "EM",
   "ERA",
+  "EXE",
   "F",
   "FA",
+  "FIX",
   "FLY",
   "FURB",
   "G",
   "I",
+  "ICN",
   "INP",
   "INT",
+  "ISC",
   "LOG",
   "N",
+  "NPY",
+  "PD",
   "PERF",
   "PGH",
   "PIE",
@@ -95,9 +108,11 @@ select = [
   "PTH",
   "PYI",
   "Q",
+  "R",
   "RET",
   "RSE",
   "RUF",
+  "S",
   "SIM",
   "SLF",
   "SLOT",
@@ -113,10 +128,14 @@ select = [
 
 ignore = [
   "E501",    # line too long
+  "EM101",   # raw-string-in-exception
+  "EM102",   # f-string-in-exception
   "PLC0414", # useless-import-alias
   "RET505",  # superfluous-else-return
   "RET508",  # superfluous-else-break
   "RUF012",  # mutable-class-default
+  "S404",    # suspicious-subprocess-import
+  "S603",    # subprocess-without-shell-equals-true
   "SIM112",  # uncapitalized-environment-variables
   "TD003",   # missing-todo-link
   "TID252",  # relative-imports
@@ -141,14 +160,22 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = [
+  "ANN001",  # missing-type-function-argument
+  "ANN201",  # missing-return-type-undocumented-public-function
+  "ANN202",  # missing-return-type-private-function
   "PLC2701", # import-private-name
   "PLR0904", # too-many-public-methods
   "PLR0913", # too-many-arguments
   "PLR0917", # too-many-positional
   "PLR2004", # magic-value-comparison
   "PLR6301", # no-self-use
+  "S101",    # assert
+  "S108",    # hardcoded-temp-file
   "SLF001",  # private-member-access
 ]
+
+[tool.ruff.lint.flake8-annotations]
+allow-star-arg-any = true
 
 [tool.ruff.lint.pylint]
 max-args = 7

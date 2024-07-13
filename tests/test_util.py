@@ -5,6 +5,7 @@ import subprocess
 from unittest.mock import ANY
 
 import pytest
+import typer
 from pydantic import BaseModel
 
 from cortex_shell import constants as C  # noqa: N812  # noqa: N812
@@ -12,12 +13,54 @@ from cortex_shell.util import (
     fill_values,
     get_colored_text,
     get_resource_file,
+    option_callback,
     os_name,
+    print_formatted_text,
     rmtree,
     run_command,
     shell_name,
 )
 from testing.util import get_path_to_shell, get_test_resource_file, ignore_if_windows, prepend_dir_to_path
+
+
+class TestOptionCallback:
+    def test_option_callback_with_none_value(self, mocker):
+        mock = mocker.Mock()
+        decorated_func = option_callback(mock)
+
+        decorated_func(object, None)
+        mock.assert_not_called()
+
+    def test_option_callback_with_false(self, mocker):
+        mock = mocker.Mock()
+        decorated_func = option_callback(mock)
+
+        decorated_func(object, False)
+        mock.assert_not_called()
+
+    def test_option_callback_with_empty_string(self, mocker):
+        mock = mocker.Mock()
+        decorated_func = option_callback(mock)
+
+        decorated_func(object, "")
+        mock.assert_not_called()
+
+    def test_option_callback_with_true(self, mocker):
+        mock = mocker.Mock()
+        decorated_func = option_callback(mock)
+
+        with pytest.raises(typer.Exit):
+            decorated_func(object, True)
+        mock.assert_called_once_with(object, True)
+
+    def test_option_callback_with_string(self, mocker):
+        mock = mocker.Mock()
+        decorated_func = option_callback(mock)
+        value = "text"
+
+        with pytest.raises(typer.Exit):
+            decorated_func(object, value)
+        mock.assert_called_once_with(object, value)
 
 
 class TestShellIntegration:
@@ -232,13 +275,62 @@ class TestRunCommand:
             pytest.fail("CalledProcessError should be suppressed")
 
     def test_run_command_unsupported_shell(self, mocker):
-        # Mock platform.system
         mocker.patch("platform.system", return_value="Linux")
         mocker.patch(f"{C.PROJECT_MODULE}.util.shell_name", return_value="unsupported_shell")
 
         # Mock shell_name
         with pytest.raises(ValueError, match="Unsupported shell: unsupported_shell"):
             run_command("echo 'Hello, World!'")
+
+
+class TestPrintFormattedText:
+    def test_print_plain_text_tty(self, mocker):
+        mocker.patch(f"{C.PROJECT_MODULE}.util.is_tty", return_value=True)
+        print_mock = mocker.patch("builtins.print")
+        mock = mocker.patch(f"{C.PROJECT_MODULE}.util.print_formatted_text_orig")
+
+        text1 = "1234"
+        text2 = "5678"
+        print_formatted_text(text1, text2, sep=": ", end="\t")
+
+        print_mock.assert_not_called()
+        mock.assert_called_once_with(text1, text2, sep=": ", end="\t")
+
+    def test_print_formatted_text_tty(self, mocker):
+        mocker.patch(f"{C.PROJECT_MODULE}.util.is_tty", return_value=True)
+        print_mock = mocker.patch("builtins.print")
+        mock = mocker.patch(f"{C.PROJECT_MODULE}.util.print_formatted_text_orig")
+
+        text1 = get_colored_text("1234", "red")
+        text2 = get_colored_text("5678", "green")
+        print_formatted_text(text1, text2, sep=": ", end="\t")
+
+        print_mock.assert_not_called()
+        mock.assert_called_once_with(text1, text2, sep=": ", end="\t")
+
+    def test_print_plain_text_no_tty(self, mocker):
+        mocker.patch(f"{C.PROJECT_MODULE}.util.is_tty", return_value=False)
+        print_mock = mocker.patch("builtins.print")
+        mock = mocker.patch(f"{C.PROJECT_MODULE}.util.print_formatted_text_orig")
+
+        text1 = "1234"
+        text2 = "5678"
+        print_formatted_text(text1, text2, sep=": ", end="\t")
+
+        print_mock.assert_called_once_with(text1, text2, sep=": ", end="\t")
+        mock.assert_not_called()
+
+    def test_print_formatted_text_notty(self, mocker):
+        mocker.patch(f"{C.PROJECT_MODULE}.util.is_tty", return_value=False)
+        print_mock = mocker.patch("builtins.print")
+        mock = mocker.patch(f"{C.PROJECT_MODULE}.util.print_formatted_text_orig")
+
+        text1 = "1234"
+        text2 = "5678"
+        print_formatted_text(get_colored_text("1234", "red"), get_colored_text("5678", "green"), sep=": ", end="\t")
+
+        print_mock.assert_called_once_with(text1, text2, sep=": ", end="\t")
+        mock.assert_not_called()
 
 
 class TestRmTree:

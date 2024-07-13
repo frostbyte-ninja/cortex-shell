@@ -49,7 +49,7 @@ class TestReplHandler:
         mock_processing.print_history.assert_called_once()
         mock_super_handle.assert_not_called()
 
-    def test_handle_calls_super_handle(self, repl_handler, mock_input, mock_processing, mocker):
+    def test_handle_calls_super_handle(self, repl_handler, mock_input, mocker):
         mock_super_handle = mocker.patch.object(DefaultHandler, "handle")
 
         mock_input.send_text("command1\n")
@@ -60,7 +60,7 @@ class TestReplHandler:
 
         mock_super_handle.assert_called_once_with("test prompt\n\ncommand1")
 
-    def test_handle_calls_prompt_until_abort(self, repl_handler, mock_input, mock_processing, mocker):
+    def test_handle_calls_prompt_until_abort(self, repl_handler, mock_input, mocker):
         mock_super_handle = mocker.patch.object(DefaultHandler, "handle")
 
         mock_input.send_text("command1\n")

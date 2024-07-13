@@ -25,7 +25,7 @@ def mock_log_and_exit(mocker, error_handler):
 @pytest.fixture
 def capture_output(mocker, error_handler):
     class FakeStream:
-        def __init__(self):
+        def __init__(self) -> None:
             self.data = io.BytesIO()
 
         def write(self, s):
@@ -35,7 +35,7 @@ def capture_output(mocker, error_handler):
             pass
 
     class StreamWrapper:
-        def __init__(self, stream):
+        def __init__(self, stream) -> None:
             self._stream = stream
 
         def get_bytes(self):
@@ -110,7 +110,7 @@ class TestErrorHandler:
 
     def test_error_handler_non_stringable_exception(self, error_handler):
         class TestError(Exception):
-            def __str__(self):
+            def __str__(self) -> str:
                 raise RuntimeError("not today!")
 
         with pytest.raises(SystemExit), error_handler:

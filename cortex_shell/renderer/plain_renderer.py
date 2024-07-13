@@ -12,7 +12,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 
 class PlainRenderer(IRenderer):
-    def __init__(self, role: Role):
+    def __init__(self, role: Role) -> None:
         self._role = role
 
     def __enter__(self) -> Self:
@@ -22,5 +22,5 @@ class PlainRenderer(IRenderer):
         # new line
         print_formatted_text()
 
-    def __call__(self, text: str, chunk: str) -> None:
+    def __call__(self, text: str, chunk: str) -> None:  # noqa: ARG002
         print_formatted_text(get_colored_text(chunk, self._role.output.color), end="")  # type: ignore[arg-type]

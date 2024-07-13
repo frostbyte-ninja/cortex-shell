@@ -39,8 +39,6 @@ class RadioListHorizontal(Generic[_T]):
         values: Sequence[tuple[_T, AnyFormattedText]],
         default_value: _T | None = None,
     ) -> None:
-        assert len(values) > 0
-
         self.values = values
 
         keys: list[_T] = [value for (value, _) in values]

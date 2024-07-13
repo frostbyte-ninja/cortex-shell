@@ -1,5 +1,6 @@
 from collections.abc import Generator
-from hashlib import md5
+from functools import wraps
+from hashlib import sha256
 from pathlib import Path
 from typing import Any, Callable
 
@@ -23,7 +24,7 @@ class Cache:
         self._cache_path = cache_path
         self._cache_path.mkdir(parents=True, exist_ok=True)
 
-    def __call__(self, func: Callable[..., Any]) -> Callable[..., Any]:
+    def __call__(self, func: Callable[..., Generator[str, None, None]]) -> Callable[..., Generator[str, None, None]]:
         """
         The Cache decorator.
 
@@ -31,6 +32,7 @@ class Cache:
         :return: Wrapped function with caching.
         """
 
+        @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Generator[str, None, None]:
             cache_file = self._cache_path / self._get_hash_from_request(**kwargs)
             if kwargs.pop("caching", False) and cache_file.exists():
@@ -66,7 +68,7 @@ class Cache:
         kwargs.pop("caching")
         # delete every message except the last one, which is the most recent user prompt
         kwargs["messages"] = kwargs["messages"][-1:]
-        return md5(yaml_dump_str(kwargs).encode("utf-8")).hexdigest()
+        return sha256(yaml_dump_str(kwargs).encode("utf-8")).hexdigest()
 
     @classmethod
     @option_callback

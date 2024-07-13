@@ -41,7 +41,7 @@ class ReplHandler(DefaultHandler):
 
         super().handle(prompt, **kwargs)
 
-    def _get_user_input(self) -> Any:
+    def _get_user_input(self) -> str:
         bindings = KeyBindings()
 
         @bindings.add(Keys.ControlE)  # type: ignore[misc]
