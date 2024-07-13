@@ -7,7 +7,7 @@ from cortex_shell.types import Message
 from testing.util import ignore_if_windows
 
 
-@pytest.fixture()
+@pytest.fixture
 def messages():
     return [
         Message(role="role1", content="Message 1"),
@@ -16,12 +16,12 @@ def messages():
     ]
 
 
-@pytest.fixture()
+@pytest.fixture
 def shell_execution_post_processing(mock_role, mock_shell_role, mock_client):
     return ShellExecutionPostProcessing(shell_role=mock_shell_role, describe_shell_role=mock_role, client=mock_client)
 
 
-@pytest.fixture()
+@pytest.fixture
 def mock_prompt(mocker, shell_execution_post_processing):
     return mocker.patch.object(shell_execution_post_processing, "_prompt")
 

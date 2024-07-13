@@ -10,7 +10,7 @@ from cortex_shell.application import Application
 from testing.util import all_combinations
 
 
-@pytest.fixture()
+@pytest.fixture
 def app(mocker, mock_client, monkeypatch):
     monkeypatch.setenv("TERM", "dumb")  # disable colored output
     mocker.patch(f"{C.PROJECT_MODULE}.application.Application._get_client", new=mock_client)

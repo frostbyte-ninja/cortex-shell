@@ -14,14 +14,14 @@ _ctrl_d = b"\x04"
 _ctrl_e = b"\x05"
 
 
-@pytest.fixture()
+@pytest.fixture
 def mock_input():
     with create_pipe_input() as pipe_input, create_app_session(input=pipe_input, output=DummyOutput()):
         pipe_input.send_ctrl_c = functools.partial(pipe_input.send_bytes, _ctrl_c)
         yield pipe_input
 
 
-@pytest.fixture()
+@pytest.fixture
 def repl_handler(mock_client, mock_processing, mock_renderer, mocker, mock_input):
     handler = ReplHandler(mock_client, mock_processing, mock_renderer)
     mocker.patch.object(handler, "_client")

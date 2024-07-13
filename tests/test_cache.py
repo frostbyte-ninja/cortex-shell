@@ -7,14 +7,14 @@ def drain_generator(generator):
     return "".join(generator)
 
 
-@pytest.fixture()
+@pytest.fixture
 def cache_path(tmp_dir_factory):
     temp_dir = tmp_dir_factory.get() / "some_dir"
     assert not temp_dir.exists()
     return temp_dir
 
 
-@pytest.fixture()
+@pytest.fixture
 def cache(cache_path):
     cache = Cache(5, cache_path)
     assert cache_path.exists()

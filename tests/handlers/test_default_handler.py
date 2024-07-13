@@ -4,7 +4,7 @@ from cortex_shell.handlers.default_handler import DefaultHandler
 from cortex_shell.handlers.ihandler import IHandler
 
 
-@pytest.fixture()
+@pytest.fixture
 def default_handler(mock_client, mock_processing, mock_renderer):
     return DefaultHandler(mock_client, mock_processing, mock_renderer)
 

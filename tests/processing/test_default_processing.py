@@ -3,7 +3,7 @@ import pytest
 from cortex_shell.processing.default_processing import DefaultProcessing
 
 
-@pytest.fixture()
+@pytest.fixture
 def default_processing(mock_role, mock_history, mock_post_processing):
     return DefaultProcessing(mock_role, mock_history, mock_post_processing)
 

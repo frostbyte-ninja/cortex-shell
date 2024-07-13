@@ -4,7 +4,7 @@ from cortex_shell.processing.file_processing import FileProcessing
 from cortex_shell.role import FILE_ROLE
 
 
-@pytest.fixture()
+@pytest.fixture
 def file_processing(mock_role, mock_history, mock_post_processing, tmp_file_factory):
     files = [tmp_file_factory.get()]
     return FileProcessing(mock_role, files, mock_history, mock_post_processing)

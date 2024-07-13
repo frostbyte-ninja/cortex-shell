@@ -12,17 +12,17 @@ from cortex_shell.error_handler import ErrorHandler
 from cortex_shell.errors import FatalError
 
 
-@pytest.fixture()
+@pytest.fixture
 def error_handler():
     return ErrorHandler()
 
 
-@pytest.fixture()
+@pytest.fixture
 def mock_log_and_exit(mocker, error_handler):
     return mocker.patch.object(error_handler, "_log_and_exit")
 
 
-@pytest.fixture()
+@pytest.fixture
 def capture_output(mocker, error_handler):
     class FakeStream:
         def __init__(self):
